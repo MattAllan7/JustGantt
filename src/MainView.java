@@ -10,7 +10,7 @@ public class MainView {
         MenuBar menuBar = new MenuBarView().getView();
         root.setTop(menuBar);
 
-        BorderPane taskView = new TaskListView().getView();
+        BorderPane taskView = new TaskListView().getView(currentProject);
         root.setLeft(taskView);
 
         BorderPane timelineView = new TimelineView().getView(currentProject);

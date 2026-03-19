@@ -1,32 +1,49 @@
-import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.layout.*;
 import javafx.scene.control.*;
+import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 
 public class TaskListView {
 
-    private final int ROW_GAP = 5;
+    private final int TASK_TEXT_HEIGHT = 25;
+    private final int GAP_BETWEEN_TEXT = 5;
 
-    public BorderPane getView() {
+    public BorderPane getView(Project currentProject) {
         BorderPane borderPane = new BorderPane();
         borderPane.setTop(getHBox());
-        borderPane.setCenter(getVBox());
+        borderPane.setCenter(getVBox(currentProject));
         return borderPane;
     }
 
     private HBox getHBox() {
         HBox hBox = new HBox();
+        hBox.setPrefHeight(50);
+        hBox.setAlignment(Pos.CENTER_LEFT);
+
         addButtons(hBox);
+
         return hBox;
     }
 
-    private VBox getVBox() {
-        VBox vBox = new VBox(ROW_GAP);
+    private VBox getVBox(Project currentProject) { // Change to Pane
+        VBox vBox = new VBox(GAP_BETWEEN_TEXT);
 
-        vBox.getChildren().add(new TextField());
-        vBox.getChildren().add(new TextField());
+        ArrayList<Task> tasks = currentProject.getTasks();
+        for(int i=0; i<tasks.size(); i++) {
+            Label label = new Label(tasks.get(i).getName());
+            label.setFont(new Font(12));
+            label.setAlignment(Pos.CENTER_LEFT);
+            label.setPrefHeight(TASK_TEXT_HEIGHT);
 
+            vBox.getChildren().add(label);
+        }
         return vBox;
     }
 

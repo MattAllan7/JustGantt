@@ -5,8 +5,6 @@ import java.util.ArrayList;
 
 public class Task {
 
-    private final int ARC_VALUE = 10;
-
     private String name;
     private LocalDate startDate;
     private LocalDate endDate;
@@ -25,13 +23,23 @@ public class Task {
         dependencies = new ArrayList<>();
     }
 
-    public Rectangle toRectangle(int pixelsPerDay) {
+    public Rectangle toRectangle(int pixelsPerDay, int rectHeight) {
+        int arcValue = 10;
+
         Rectangle rect = new Rectangle();
         rect.setWidth(getDuration() * pixelsPerDay);
-        rect.setHeight(25);
-        rect.setArcWidth(ARC_VALUE);
-        rect.setArcHeight(ARC_VALUE);
+        rect.setHeight(rectHeight);
+        rect.setArcWidth(arcValue);
+        rect.setArcHeight(arcValue);
         return rect;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public LocalDate getStartDate() {
+        return startDate;
     }
 
     public int getDuration() {
