@@ -19,7 +19,6 @@ public class TimelineView {
 
     private HBox getHBox(Project currentProject) {
         HBox hBox = new HBox();
-        //hBox.setPadding(new Insets(5));
         LocalDate date = currentProject.getStartDate();
 
         for(int i=0; i<30; i++) {
@@ -52,10 +51,8 @@ public class TimelineView {
 
     private VBox getVBox(Project currentProject) {
         VBox vBox = new VBox(ROW_GAP);
-        vBox.setSpacing(5);
-        //vBox.setPadding(new Insets(5));
         for(Task task : currentProject.getTasks()) {
-            vBox.getChildren().add(task.toRectangle());
+            vBox.getChildren().add(task.toRectangle(PIXELS_PER_DAY));
         }
         return vBox;
     }

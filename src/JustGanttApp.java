@@ -10,9 +10,9 @@ public class JustGanttApp extends Application {
     @Override
     public void start(Stage primaryStage) {
         ArrayList<Task> tasks = new ArrayList<>();
-        tasks.add(new Task("one", 0, 1));
-        tasks.add(new Task("two", 0, 2));
-        tasks.add(new Task("three", 0, 3));
+        tasks.add(new Task("one", LocalDate.now(), 1));
+        tasks.add(new Task("two", LocalDate.now(), 2));
+        tasks.add(new Task("three", LocalDate.now(), 3));
         Project currentProject = new Project("p1", tasks, LocalDate.now());
 
         primaryStage.setTitle("JustGantt");

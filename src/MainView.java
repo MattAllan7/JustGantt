@@ -11,16 +11,10 @@ public class MainView {
         root.setTop(menuBar);
 
         BorderPane taskView = new TaskListView().getView();
-        taskView.setPadding(new Insets(5));
         root.setLeft(taskView);
 
         BorderPane timelineView = new TimelineView().getView(currentProject);
-        timelineView.setPadding(new Insets(5));
         root.setCenter(timelineView);
-
-        // test, temporary
-        DatePicker datePicker = new DatePicker();
-        root.setRight(datePicker);
 
         return root;
     }
