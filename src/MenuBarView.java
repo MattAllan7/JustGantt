@@ -1,11 +1,15 @@
 import javafx.scene.control.*;
 
+/**
+ * The menu bar at the top containing items such as "file".
+ */
 public class MenuBarView {
 
     public MenuBar getView() {
         MenuBar menuBar = new MenuBar();
         menuBar.setUseSystemMenuBar(true);
 
+        // <<< File >>
         Menu file = new Menu("File");
 
         MenuItem newItem = new MenuItem("New");

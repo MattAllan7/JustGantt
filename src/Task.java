@@ -1,8 +1,9 @@
-import javafx.scene.shape.Rectangle;
-
 import java.time.LocalDate;
 import java.util.ArrayList;
 
+/**
+ * An object containing a series of task attributes.
+ */
 public class Task {
 
     private String name;
@@ -21,17 +22,6 @@ public class Task {
         endDate = startDate.plusDays(duration);
         progress = 0;
         dependencies = new ArrayList<>();
-    }
-
-    public Rectangle toRectangle(int pixelsPerDay, int rectHeight) {
-        int arcValue = 10;
-
-        Rectangle rect = new Rectangle();
-        rect.setWidth(getDuration() * pixelsPerDay);
-        rect.setHeight(rectHeight);
-        rect.setArcWidth(arcValue);
-        rect.setArcHeight(arcValue);
-        return rect;
     }
 
     public String getName() {

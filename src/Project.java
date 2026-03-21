@@ -1,26 +1,32 @@
 import java.time.LocalDate;
 import java.util.ArrayList;
 
+/**
+ * A list of tasks with a name and a start date.
+ * This is saved as a JSON file to the disk.
+ */
 public class Project {
 
     private String name;
     private ArrayList<Task> tasks;
     private LocalDate startDate;
 
-    public Project() {
+    public Project(String name, LocalDate startDate) {
+        this.name = name;
         tasks = new ArrayList<>();
-    }
-
-    // temporary.
-    public Project(String name, ArrayList<Task> tasks) {
-        this.name = name;
-        this.tasks = tasks;
-    }
-
-    public Project(String name, ArrayList<Task> tasks, LocalDate startDate) {
-        this.name = name;
-        this.tasks = tasks;
         this.startDate = startDate;
+    }
+
+    public void addTask(Task task) {
+        tasks.add(task);
+    }
+
+    public void addTasks(ArrayList<Task> tasks) {
+        this.tasks.addAll(tasks);
+    }
+
+    public String getName() {
+        return name;
     }
 
     public ArrayList<Task> getTasks() {
@@ -29,6 +35,10 @@ public class Project {
 
     public LocalDate getStartDate() {
         return startDate;
+    }
+
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
     }
 
 }

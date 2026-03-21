@@ -1,6 +1,4 @@
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
@@ -9,65 +7,102 @@ import javafx.scene.control.*;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalAmount;
 import java.util.ArrayList;
 
+/**
+ * The right view.
+ * Displays the timeline or chart of the project.
+ * The date axis is at the top and the tasks are represented as rectangles.
+ */
 public class TimelineView {
 
-    private final int ROW_GAP = 5;
-    public final int PIXELS_PER_DAY = 30;
-    private final int TASK_RECTANGLE_HEIGHT = 25;
-    private final int GAP_BETWEEN_RECTANGLES = 5;
+    public final int PIXELS_PER_DAY = 50;
 
-    public BorderPane getView(Project currentProject) {
+    private ProjectManager projectManager;
+    private int rowGap;
+    private int rowHeight;
+
+    private HBox dateAxis;
+    private Pane rectangleArea;
+
+    public TimelineView(ProjectManager projectManager, int rowGap, int rowHeight) {
+        this.projectManager = projectManager;
+        this.rowGap = rowGap;
+        this.rowHeight = rowHeight;
+
+        setupDateAxis();
+        setupRectangleArea();
+        refreshUI();
+    }
+
+    private void setupDateAxis() {
+        dateAxis = new HBox();
+        dateAxis.setPrefHeight(50);
+        dateAxis.setAlignment(Pos.CENTER); // Regarding the y-axis.
+    }
+
+    private void setupRectangleArea() {
+        rectangleArea = new Pane();
+    }
+
+    public BorderPane getView() {
         BorderPane borderPane = new BorderPane();
-        borderPane.setTop(getHBox(currentProject));
-        borderPane.setCenter(getTimeline(currentProject));
+        borderPane.setTop(dateAxis);
+        borderPane.setCenter(rectangleArea);
         return borderPane;
     }
 
-    private HBox getHBox(Project currentProject) {
-        HBox hBox = new HBox();
-        hBox.setPrefHeight(50);
-        hBox.setAlignment(Pos.CENTER_LEFT);
+    public void refreshUI() {
+        refreshDateAxis();
+        refreshRectangleArea();
+    }
 
-        LocalDate date = currentProject.getStartDate();
+    private void refreshDateAxis() {
+        dateAxis.getChildren().clear();
 
+        LocalDate date = projectManager.getStartDate();
         for(int i=0; i<30; i++) {
             Label label = new Label();
             label.setFont(new Font(12));
             label.setTextAlignment(TextAlignment.CENTER);
+            label.setAlignment(Pos.CENTER);
             label.setPrefWidth(PIXELS_PER_DAY);
             label.setMinWidth(PIXELS_PER_DAY);
             label.setMaxWidth(PIXELS_PER_DAY);
             String month = date.getMonth().toString().substring(0, 3);
             label.setText(month + "\n" + date.getDayOfMonth());
             date = date.plusDays(1);
-            hBox.getChildren().add(label);
+            dateAxis.getChildren().add(label);
         }
-
-        // temp border code
-//        hBox.setBorder(new Border(new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, CornerRadii.EMPTY, BorderWidths.DEFAULT)));
-//        hBox.setBorder(new Border(new BorderStroke(Color.TRANSPARENT, Color.TRANSPARENT, Color.BLACK, Color.TRANSPARENT,
-//                BorderStrokeStyle.SOLID, BorderStrokeStyle.SOLID, BorderStrokeStyle.SOLID, BorderStrokeStyle.SOLID,
-//                CornerRadii.EMPTY, BorderWidths.DEFAULT, new Insets(5))));
-        return hBox;
     }
 
-    private Pane getTimeline(Project currentProject) {
-        Pane timeline = new Pane();
-        ArrayList<Task> tasks = currentProject.getTasks();
+    private void refreshRectangleArea() {
+        rectangleArea.getChildren().clear();
+
+        ArrayList<Task> tasks = projectManager.getTasks();
         for(int i=0; i<tasks.size(); i++) {
-            Rectangle taskRect = tasks.get(i).toRectangle(PIXELS_PER_DAY, TASK_RECTANGLE_HEIGHT);
-            long startDayNumber = ChronoUnit.DAYS.between(LocalDate.now(), tasks.get(i).getStartDate());
-            long spaceInPixels = startDayNumber * PIXELS_PER_DAY;
-
-            taskRect.setX(spaceInPixels);
-            taskRect.setY((TASK_RECTANGLE_HEIGHT + GAP_BETWEEN_RECTANGLES) * i);
-
-            timeline.getChildren().add(taskRect);
+            Task currentTask = tasks.get(i);
+            Rectangle taskRect = toRectangle(currentTask, i);
+            rectangleArea.getChildren().add(taskRect);
         }
-        return timeline;
+    }
+
+    private Rectangle toRectangle(Task task, int index) {
+        int arcValue = 10;
+
+        Rectangle rect = new Rectangle();
+        rect.setWidth(task.getDuration() * PIXELS_PER_DAY);
+        rect.setHeight(rowHeight);
+        rect.setArcWidth(arcValue);
+        rect.setArcHeight(arcValue);
+
+        long startDayNumber = ChronoUnit.DAYS.between(projectManager.getStartDate(), task.getStartDate());
+        long spaceInPixels = startDayNumber * PIXELS_PER_DAY;
+
+        rect.setX(spaceInPixels);
+        rect.setY((rowHeight + rowGap) * index); // index likely needs to change eventually.
+
+        return rect;
     }
 
 }

@@ -1,76 +1,70 @@
 import javafx.geometry.Pos;
 import javafx.scene.layout.*;
 import javafx.scene.control.*;
-import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
-import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
+import javafx.scene.text.FontWeight;
 
-import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 
+/**
+ * The middle view.
+ * Displays a list of the project's tasks.
+ */
 public class TaskListView {
 
-    private final int TASK_TEXT_HEIGHT = 25;
-    private final int GAP_BETWEEN_TEXT = 5;
+    private ProjectManager projectManager;
+    private Runnable onTaskChanged; // Will need for edit and delete.
+    private int rowGap;
+    private int rowHeight;
 
-    public BorderPane getView(Project currentProject) {
+    private Label header;
+    private VBox taskListPane;
+
+    public TaskListView(ProjectManager projectManager, Runnable onTaskChanged, int rowGap, int rowHeight) {
+        this.projectManager = projectManager;
+        this.onTaskChanged = onTaskChanged;
+        this.rowGap = rowGap;
+        this.rowHeight = rowHeight;
+
+        setupHeader();
+        setupTaskListPane();
+        refreshUI();
+    }
+
+    private void setupHeader() {
+        header = new Label("Tasks");
+        header.setFont(Font.font("System", FontWeight.BOLD, 24));
+        header.setPrefHeight(50); // Get all formatting from MainView eventually.
+    }
+
+    private void setupTaskListPane() {
+        taskListPane = new VBox(rowGap);
+    }
+
+    public BorderPane getView() {
         BorderPane borderPane = new BorderPane();
-        borderPane.setTop(getHBox());
-        borderPane.setCenter(getVBox(currentProject));
+
+        borderPane.setPrefWidth(400);
+        borderPane.setMinWidth(Region.USE_PREF_SIZE);
+        borderPane.setMaxWidth(Region.USE_PREF_SIZE);
+
+        borderPane.setTop(header);
+        borderPane.setCenter(taskListPane);
         return borderPane;
     }
 
-    private HBox getHBox() {
-        HBox hBox = new HBox();
-        hBox.setPrefHeight(50);
-        hBox.setAlignment(Pos.CENTER_LEFT);
+    public void refreshUI() {
+        taskListPane.getChildren().clear();
 
-        addButtons(hBox);
+        ArrayList<Task> tasks = projectManager.getTasks();
 
-        return hBox;
-    }
-
-    private VBox getVBox(Project currentProject) { // Change to Pane
-        VBox vBox = new VBox(GAP_BETWEEN_TEXT);
-
-        ArrayList<Task> tasks = currentProject.getTasks();
-        for(int i=0; i<tasks.size(); i++) {
-            Label label = new Label(tasks.get(i).getName());
-            label.setFont(new Font(12));
+        for(Task task : tasks) {
+            Label label = new Label(task.getName());
+            label.setFont(Font.font("System", FontWeight.NORMAL, 16));
             label.setAlignment(Pos.CENTER_LEFT);
-            label.setPrefHeight(TASK_TEXT_HEIGHT);
-
-            vBox.getChildren().add(label);
+            label.setPrefHeight(rowHeight);
+            taskListPane.getChildren().add(label);
         }
-        return vBox;
-    }
-
-    private void addButtons(HBox hBox) {
-
-        ArrayList<Button> buttons = new ArrayList<>();
-
-        Button buttonAdd = new Button("Add");
-        buttons.add(buttonAdd);
-
-        Button buttonEdit = new Button("Edit");
-        buttons.add(buttonEdit);
-
-        Button buttonDelete = new Button("Delete");
-        buttons.add(buttonDelete);
-
-        for(Button button : buttons) {
-            button.setPrefWidth(60);
-            button.setMinWidth(Region.USE_PREF_SIZE);
-            button.setMaxWidth(Region.USE_PREF_SIZE);
-
-            button.setPrefHeight(25);
-            button.setMinHeight(Region.USE_PREF_SIZE);
-            button.setMaxHeight(Region.USE_PREF_SIZE);
-        }
-
-        hBox.getChildren().addAll(buttons);
     }
 
 }
