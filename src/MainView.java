@@ -24,7 +24,7 @@ public class MainView {
     public MainView(ProjectManager projectManager) {
         menuBarView = new MenuBarView();
         taskCreatorView = new TaskCreatorView(projectManager, this::refreshAll, ROW_GAP);
-        taskListView = new TaskListView(projectManager, this::refreshAll, ROW_GAP, ROW_HEIGHT);
+        taskListView = new TaskListView(projectManager, this::refreshAll, taskCreatorView::loadTask, ROW_GAP, ROW_HEIGHT);
         timelineView = new TimelineView(projectManager, ROW_GAP, ROW_HEIGHT);
     }
 
@@ -59,6 +59,7 @@ public class MainView {
         taskCreatorView.refreshUI();
         taskListView.refreshUI();
         timelineView.refreshUI();
+
     }
 
 }

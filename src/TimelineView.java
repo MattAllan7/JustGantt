@@ -16,7 +16,7 @@ import java.util.ArrayList;
  */
 public class TimelineView {
 
-    public final int PIXELS_PER_DAY = 50;
+    public final int PIXELS_PER_DAY = 30;
 
     private ProjectManager projectManager;
     private int rowGap;
@@ -35,6 +35,13 @@ public class TimelineView {
         refreshUI();
     }
 
+    public BorderPane getView() {
+        BorderPane borderPane = new BorderPane();
+        borderPane.setTop(dateAxis);
+        borderPane.setCenter(rectangleArea);
+        return borderPane;
+    }
+
     private void setupDateAxis() {
         dateAxis = new HBox();
         dateAxis.setPrefHeight(50);
@@ -43,13 +50,6 @@ public class TimelineView {
 
     private void setupRectangleArea() {
         rectangleArea = new Pane();
-    }
-
-    public BorderPane getView() {
-        BorderPane borderPane = new BorderPane();
-        borderPane.setTop(dateAxis);
-        borderPane.setCenter(rectangleArea);
-        return borderPane;
     }
 
     public void refreshUI() {
@@ -62,6 +62,8 @@ public class TimelineView {
 
         LocalDate date = projectManager.getStartDate();
         for(int i=0; i<30; i++) {
+            
+            // Label formatting
             Label label = new Label();
             label.setFont(new Font(12));
             label.setTextAlignment(TextAlignment.CENTER);
@@ -69,6 +71,8 @@ public class TimelineView {
             label.setPrefWidth(PIXELS_PER_DAY);
             label.setMinWidth(PIXELS_PER_DAY);
             label.setMaxWidth(PIXELS_PER_DAY);
+
+            // Label text and displaying
             String month = date.getMonth().toString().substring(0, 3);
             label.setText(month + "\n" + date.getDayOfMonth());
             date = date.plusDays(1);

@@ -5,6 +5,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 
 import java.util.ArrayList;
+import java.util.function.Consumer;
 
 /**
  * The middle view.
@@ -14,31 +15,23 @@ public class TaskListView {
 
     private ProjectManager projectManager;
     private Runnable onTaskChanged; // Will need for edit and delete.
+    private Consumer<Task> onEditTask;
     private int rowGap;
     private int rowHeight;
 
     private Label header;
     private VBox taskListPane;
 
-    public TaskListView(ProjectManager projectManager, Runnable onTaskChanged, int rowGap, int rowHeight) {
+    public TaskListView(ProjectManager projectManager, Runnable onTaskChanged, Consumer<Task> onEditTask, int rowGap, int rowHeight) {
         this.projectManager = projectManager;
         this.onTaskChanged = onTaskChanged;
+        this.onEditTask = onEditTask;
         this.rowGap = rowGap;
         this.rowHeight = rowHeight;
 
         setupHeader();
         setupTaskListPane();
         refreshUI();
-    }
-
-    private void setupHeader() {
-        header = new Label("Tasks");
-        header.setFont(Font.font("System", FontWeight.BOLD, 24));
-        header.setPrefHeight(50); // Get all formatting from MainView eventually.
-    }
-
-    private void setupTaskListPane() {
-        taskListPane = new VBox(rowGap);
     }
 
     public BorderPane getView() {
@@ -53,6 +46,16 @@ public class TaskListView {
         return borderPane;
     }
 
+    private void setupHeader() {
+        header = new Label("Tasks");
+        header.setFont(Font.font("System", FontWeight.BOLD, 24));
+        header.setPrefHeight(50); // Get all formatting from MainView eventually.
+    }
+
+    private void setupTaskListPane() {
+        taskListPane = new VBox(rowGap);
+    }
+
     public void refreshUI() {
         taskListPane.getChildren().clear();
 
@@ -63,8 +66,46 @@ public class TaskListView {
             label.setFont(Font.font("System", FontWeight.NORMAL, 16));
             label.setAlignment(Pos.CENTER_LEFT);
             label.setPrefHeight(rowHeight);
+
+            label.setContextMenu(getContextMenu(task));
+            addHighlightAction(label);
+
             taskListPane.getChildren().add(label);
         }
+    }
+
+    private ContextMenu getContextMenu(Task task) {
+
+        ContextMenu contextMenu = new ContextMenu();
+
+        MenuItem editItem = new MenuItem("Edit");
+        MenuItem deleteItem = new MenuItem("Delete");
+
+        editItem.setOnAction(e -> {
+            System.out.println("Edit: " + task.getName());
+            onEditTask.accept(task);
+        });
+
+        deleteItem.setOnAction(e -> {
+            System.out.println("Delete: " + task.getName());
+            projectManager.deleteTask(task);
+            onTaskChanged.run();
+        });
+
+        contextMenu.getItems().addAll(editItem, deleteItem);
+
+        return contextMenu;
+    }
+
+    private void addHighlightAction(Label label) {
+
+        label.setOnMouseEntered(e -> {
+            label.setStyle("-fx-background-color: lightblue;");
+        });
+
+        label.setOnMouseExited(e -> {
+            label.setStyle("-fx-background-color: white;");
+        });
     }
 
 }

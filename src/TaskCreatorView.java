@@ -16,6 +16,12 @@ public class TaskCreatorView {
     private Runnable onTaskChanged;
     private int rowGap;
 
+    private Task editingTask = null;
+    private Button addSaveButton;
+    private Button cancelButton;
+    private final String CREATE_HEADER = "Create New Task";
+    private final String EDIT_HEADER = "Edit Task";
+
     private Label header;
     private VBox taskCreatorPane;
 
@@ -32,8 +38,20 @@ public class TaskCreatorView {
         setupTaskCreatorPane();
     }
 
+    public BorderPane getView() {
+        BorderPane borderPane = new BorderPane();
+
+        borderPane.setPrefWidth(400);
+        borderPane.setMinWidth(Region.USE_PREF_SIZE);
+        borderPane.setMaxWidth(Region.USE_PREF_SIZE);
+
+        borderPane.setTop(header);
+        borderPane.setCenter(taskCreatorPane);
+        return borderPane;
+    }
+
     private void setupHeader() {
-        header = new Label("Create New Task");
+        header = new Label(CREATE_HEADER);
         header.setFont(Font.font("System", FontWeight.BOLD, 24));
         header.setPrefHeight(50); // Get all formatting from MainView eventually.
     }
@@ -41,21 +59,29 @@ public class TaskCreatorView {
     private void setupTaskCreatorPane() {
         taskCreatorPane = new VBox(rowGap);
 
-        // <<< Name row >>>
+        setupNameRow();
+        setupStartDateRow();
+        setupDurationRow();
+        setupButtonRow();
+    }
+
+    private void setupNameRow() {
         HBox nameRow = new HBox();
         Label nameLabel = new Label("Name:");
         nameField = new TextField();
         nameRow.getChildren().addAll(nameLabel, nameField);
         taskCreatorPane.getChildren().add(nameRow);
+    }
 
-        // <<< StartDate row >>>
+    private void setupStartDateRow() {
         HBox startDateRow = new HBox();
         Label startDateLabel = new Label("Start Date:");
         startDatePicker = new DatePicker(projectManager.getStartDate());
         startDateRow.getChildren().addAll(startDateLabel, startDatePicker);
         taskCreatorPane.getChildren().add(startDateRow);
+    }
 
-        // <<< Duration row >>>
+    private void setupDurationRow() {
         HBox durationRow = new HBox();
         Label durationLabel = new Label("Duration:");
 
@@ -70,34 +96,65 @@ public class TaskCreatorView {
 
         durationRow.getChildren().addAll(durationLabel, durationSpinner);
         taskCreatorPane.getChildren().add(durationRow);
+    }
 
-        // <<< Add button >>>
-        Button addButton = new Button("Add");
-        taskCreatorPane.getChildren().add(addButton);
+    private void setupButtonRow() {
+        // <<< Add/Save button >>>
+        addSaveButton = new Button("Add");
+        updateAddSaveButton();
 
-        addButton.setOnAction(e -> {
-            Task task = new Task(nameField.getText(), startDatePicker.getValue(), durationSpinner.getValue());
-            projectManager.addTask(task);
+        // <<< Cancel button >>>
+        cancelButton = new Button("Cancel");
+        cancelButton.setVisible(false);
+
+        cancelButton.setOnAction(e -> {
+            clearEditingUI();
+        });
+
+        // <<< Button HBox >>>
+        HBox buttonRow = new HBox(addSaveButton, cancelButton);
+
+        taskCreatorPane.getChildren().add(buttonRow);
+    }
+
+    private void updateAddSaveButton() {
+        addSaveButton.setOnAction(e -> {
+            if(editingTask == null) {
+                // Create
+                projectManager.addTask(nameField.getText(), startDatePicker.getValue(), durationSpinner.getValue());
+            } else {
+                // Edit
+                projectManager.updateTask(editingTask, nameField.getText(), startDatePicker.getValue(), durationSpinner.getValue());
+                clearEditingUI();
+            }
+
             onTaskChanged.run();
         });
     }
 
-    public BorderPane getView() {
-        BorderPane borderPane = new BorderPane();
-
-        borderPane.setPrefWidth(400);
-        borderPane.setMinWidth(Region.USE_PREF_SIZE);
-        borderPane.setMaxWidth(Region.USE_PREF_SIZE);
-
-        borderPane.setTop(header);
-        borderPane.setCenter(taskCreatorPane);
-        return borderPane;
+    private void clearEditingUI() {
+        editingTask = null;
+        addSaveButton.setText("Add");
+        cancelButton.setVisible(false);
+        header.setText(CREATE_HEADER);
     }
 
     public void refreshUI() {
         nameField.clear();
         startDatePicker.setValue(projectManager.getStartDate());
         durationSpinner.getValueFactory().setValue(1);
+    }
+
+    public void loadTask(Task task) {
+        editingTask = task;
+
+        nameField.setText(task.getName());
+        startDatePicker.setValue(task.getStartDate());
+        durationSpinner.getValueFactory().setValue(task.getDuration());
+        header.setText(EDIT_HEADER);
+
+        addSaveButton.setText("Save");
+        cancelButton.setVisible(true);
     }
 
 }

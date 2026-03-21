@@ -36,4 +36,18 @@ public class Task {
         return duration;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
+        this.endDate = startDate.plusDays(duration);
+    }
+
+    public void setDuration(int duration) {
+        this.duration = duration;
+        this.endDate = startDate.plusDays(duration);
+    }
+
 }

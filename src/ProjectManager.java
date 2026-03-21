@@ -13,21 +13,30 @@ public class ProjectManager {
         this.project = project;
     }
 
-    public void addTask(Task task) {
+    public void addTask(String name, LocalDate startDate, int duration) {
 
-        // If the entered name is blank or whitespace, do not create a new task.
-        if(task.getName().isBlank()) {
-            return;
-        }
+        validateTaskInputs(name, startDate);
 
-        // If the entered start date comes before the established project start date,
-        // update the project start date to the new task's start date.
-        LocalDate startDate = task.getStartDate();
-        if(startDate.isBefore(project.getStartDate())) {
-            project.setStartDate(startDate);
-        }
+        Task task = new Task(name, startDate, duration);
 
         project.addTask(task);
+    }
+
+    public void updateTask(Task task, String name, LocalDate startDate, int duration) {
+
+        validateTaskInputs(name, startDate);
+
+        task.setName(name);
+        task.setStartDate(startDate);
+        task.setDuration(duration);
+    }
+
+    public boolean deleteTask(Task task) {
+        return project.getTasks().remove(task);
+    }
+
+    private void updateStartDate(LocalDate startDate) {
+        project.setStartDate(startDate);
     }
 
     public ArrayList<Task> getTasks() {
@@ -36,6 +45,21 @@ public class ProjectManager {
 
     public LocalDate getStartDate() {
         return project.getStartDate();
+    }
+
+    private void validateTaskInputs(String name, LocalDate startDate) {
+        if(name == null || name.isBlank()) {
+            throw new IllegalArgumentException("Task name cannot be empty");
+        }
+
+        if(startDate == null) {
+            throw new IllegalArgumentException("Task must have a start date");
+        }
+
+        if(startDate.isBefore(project.getStartDate())) {
+            throw new IllegalArgumentException("Task cannot start before the project");
+        }
+
     }
 
 }
