@@ -35,21 +35,29 @@ public class MainView {
      * @return The BorderPane to be displayed in the primaryStage.
      */
     public BorderPane createView() {
-        BorderPane root = new BorderPane();
+        BorderPane borderPane = new BorderPane();
 
         MenuBar menuBar = menuBarView.getView();
-        root.setTop(menuBar);
+        borderPane.setTop(menuBar);
 
-        BorderPane taskCreatorPane = taskCreatorView.getView();
-        root.setLeft(taskCreatorPane);
+        VBox taskCreatorPane = taskCreatorView.getView();
+//        taskCreatorPane.setMinWidth(0);
+//        taskCreatorPane.setPrefWidth(300);
+//        taskCreatorPane.setMaxWidth(Region.USE_PREF_SIZE);
 
-        BorderPane taskListPane = taskListView.getView();
-        root.setCenter(taskListPane);
+        VBox taskListPane = taskListView.getView();
+//        taskListPane.setMinWidth(Region.USE_PREF_SIZE);
+//        taskListPane.setPrefWidth(250);
+//        taskListPane.setMaxWidth(500);
 
-        BorderPane timelinePane = timelineView.getView();
-        root.setRight(timelinePane);
+        ScrollPane timelinePane = timelineView.getView();
 
-        return root;
+        SplitPane splitPane = new SplitPane();
+        splitPane.getItems().addAll(taskCreatorPane, taskListPane, timelinePane);
+        splitPane.setDividerPositions(0.25f, 0.5f);
+        borderPane.setCenter(splitPane);
+
+        return borderPane;
     }
 
     /**

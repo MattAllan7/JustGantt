@@ -25,7 +25,7 @@ public class JustGanttApp extends Application {
 
         primaryStage.setTitle(currentProject.getName() + " - JustGantt");
         MainView mainView = new MainView(projectManager);
-        primaryStage.setScene(new Scene(mainView.createView(), 1280, 720));
+        primaryStage.setScene(new Scene(mainView.createView(), 1920, 1080));
         primaryStage.setMaximized(true);
         primaryStage.show();
     }

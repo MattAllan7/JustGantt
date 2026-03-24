@@ -35,11 +35,15 @@ public class TimelineView {
         refreshUI();
     }
 
-    public BorderPane getView() {
-        BorderPane borderPane = new BorderPane();
-        borderPane.setTop(dateAxis);
-        borderPane.setCenter(rectangleArea);
-        return borderPane;
+    public ScrollPane getView() {
+        VBox vBox = new VBox();
+        vBox.getChildren().addAll(dateAxis, rectangleArea);
+
+        ScrollPane timelineWrapper = new ScrollPane();
+        timelineWrapper.setContent(vBox);
+
+        timelineWrapper.setFitToHeight(true);
+        return timelineWrapper;
     }
 
     private void setupDateAxis() {
@@ -50,6 +54,8 @@ public class TimelineView {
 
     private void setupRectangleArea() {
         rectangleArea = new Pane();
+
+        //rectangleArea = new ScrollPane();
     }
 
     public void refreshUI() {

@@ -38,16 +38,11 @@ public class TaskCreatorView {
         setupTaskCreatorPane();
     }
 
-    public BorderPane getView() {
-        BorderPane borderPane = new BorderPane();
+    public VBox getView() {
+        VBox vBox = new VBox();
 
-        borderPane.setPrefWidth(400);
-        borderPane.setMinWidth(Region.USE_PREF_SIZE);
-        borderPane.setMaxWidth(Region.USE_PREF_SIZE);
-
-        borderPane.setTop(header);
-        borderPane.setCenter(taskCreatorPane);
-        return borderPane;
+        vBox.getChildren().addAll(header, taskCreatorPane);
+        return vBox;
     }
 
     private void setupHeader() {

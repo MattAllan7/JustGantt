@@ -34,16 +34,11 @@ public class TaskListView {
         refreshUI();
     }
 
-    public BorderPane getView() {
-        BorderPane borderPane = new BorderPane();
+    public VBox getView() {
+        VBox vBox = new VBox();
 
-        borderPane.setPrefWidth(400);
-        borderPane.setMinWidth(Region.USE_PREF_SIZE);
-        borderPane.setMaxWidth(Region.USE_PREF_SIZE);
-
-        borderPane.setTop(header);
-        borderPane.setCenter(taskListPane);
-        return borderPane;
+        vBox.getChildren().addAll(header, taskListPane);
+        return vBox;
     }
 
     private void setupHeader() {
@@ -97,6 +92,12 @@ public class TaskListView {
         return contextMenu;
     }
 
+    /**
+     * Sets events to a label where when the mouse is over the label, change the background color.
+     * When the mouse leaves the label's bounds, reset the background color.
+     *
+     * @param label The label node to add actions to.
+     */
     private void addHighlightAction(Label label) {
 
         label.setOnMouseEntered(e -> {
@@ -104,7 +105,7 @@ public class TaskListView {
         });
 
         label.setOnMouseExited(e -> {
-            label.setStyle("-fx-background-color: white;");
+            label.setStyle("-fx-background-color: white;"); // Not actually the background color, fix during UI polish.
         });
     }
 
