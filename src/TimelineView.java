@@ -54,8 +54,6 @@ public class TimelineView {
 
     private void setupRectangleArea() {
         rectangleArea = new Pane();
-
-        //rectangleArea = new ScrollPane();
     }
 
     public void refreshUI() {
@@ -67,7 +65,9 @@ public class TimelineView {
         dateAxis.getChildren().clear();
 
         LocalDate date = projectManager.getStartDate();
-        for(int i=0; i<30; i++) {
+        int extraDatesCount = 5;
+        int projectLength = projectManager.getProjectLength() + extraDatesCount;
+        for(int i=0; i<projectLength; i++) {
             
             // Label formatting
             Label label = new Label();

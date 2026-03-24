@@ -1,4 +1,5 @@
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 
 /**
@@ -45,6 +46,23 @@ public class ProjectManager {
 
     public LocalDate getStartDate() {
         return project.getStartDate();
+    }
+
+    /**
+     * Finds and returns the number of days the project is.
+     * This is the number of days between the project start date and the latest task's end date.
+     *
+     * @return An int representing the difference between the latest task's end date and the project's start date.
+     */
+    public int getProjectLength() {
+        int projectLength = 0;
+        LocalDate projectStartDate = getStartDate();
+        for(Task task : getTasks()) {
+            int daysBetween = (int) ChronoUnit.DAYS.between(projectStartDate, task.getEndDate());
+            if(daysBetween > projectLength)
+                projectLength = daysBetween;
+        }
+        return projectLength;
     }
 
     private void validateTaskInputs(String name, LocalDate startDate) {

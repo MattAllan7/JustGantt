@@ -36,6 +36,10 @@ public class Task {
         return duration;
     }
 
+    public LocalDate getEndDate() {
+        return endDate;
+    }
+
     public void setName(String name) {
         this.name = name;
     }
