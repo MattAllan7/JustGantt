@@ -41,7 +41,7 @@ public class MainView {
         borderPane.setTop(menuBar);
 
         VBox taskCreatorPane = taskCreatorView.getView();
-//        taskCreatorPane.setMinWidth(0);
+        taskCreatorPane.setMinWidth(0);
 //        taskCreatorPane.setPrefWidth(300);
 //        taskCreatorPane.setMaxWidth(Region.USE_PREF_SIZE);
 

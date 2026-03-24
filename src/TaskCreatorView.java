@@ -1,7 +1,5 @@
 import javafx.scene.control.*;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -19,6 +17,7 @@ public class TaskCreatorView {
     private Task editingTask = null;
     private Button addSaveButton;
     private Button cancelButton;
+    private Button deleteButton;
     private final String CREATE_HEADER = "Create New Task";
     private final String EDIT_HEADER = "Edit Task";
 
@@ -106,8 +105,19 @@ public class TaskCreatorView {
             clearEditingUI();
         });
 
+        // <<< Delete button >>>
+        deleteButton = new Button("Delete");
+        deleteButton.setVisible(false);
+
+        deleteButton.setOnAction(e -> {
+            projectManager.removeTask(editingTask);
+            editingTask = null;
+            onTaskChanged.run();
+            clearEditingUI();
+        });
+
         // <<< Button HBox >>>
-        HBox buttonRow = new HBox(addSaveButton, cancelButton);
+        HBox buttonRow = new HBox(addSaveButton, cancelButton, deleteButton);
 
         taskCreatorPane.getChildren().add(buttonRow);
     }
@@ -131,6 +141,7 @@ public class TaskCreatorView {
         editingTask = null;
         addSaveButton.setText("Add");
         cancelButton.setVisible(false);
+        deleteButton.setVisible(false);
         header.setText(CREATE_HEADER);
     }
 
@@ -150,6 +161,7 @@ public class TaskCreatorView {
 
         addSaveButton.setText("Save");
         cancelButton.setVisible(true);
+        deleteButton.setVisible(true);
     }
 
 }

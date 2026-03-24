@@ -32,7 +32,7 @@ public class ProjectManager {
         task.setDuration(duration);
     }
 
-    public boolean deleteTask(Task task) {
+    public boolean removeTask(Task task) {
         return project.getTasks().remove(task);
     }
 
