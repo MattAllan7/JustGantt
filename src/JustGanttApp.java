@@ -1,6 +1,9 @@
 import javafx.application.Application;
+import javafx.geometry.Rectangle2D;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
+import javafx.stage.StageStyle;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -25,9 +28,26 @@ public class JustGanttApp extends Application {
 
         primaryStage.setTitle(currentProject.getName() + " - JustGantt");
         MainView mainView = new MainView(projectManager);
-        primaryStage.setScene(new Scene(mainView.createView(), 1920, 1080));
-        primaryStage.setMaximized(true);
+        primaryStage.setScene(new Scene(mainView.createView()));
+        setStageSize(primaryStage);
         primaryStage.show();
+    }
+
+    /**
+     * Sets a stage's size to that of the user's display.
+     * from "perf coder" <a href="https://stackoverflow.com/questions/47054839/stop-resizing-beyond-screen-resolution-range-javafx">...</a>
+     *
+     * @param stage The stage to set the size of.
+     */
+    private void setStageSize(Stage stage) {
+        Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
+
+        stage.setX(bounds.getMinX());
+        stage.setY(bounds.getMinY());
+        stage.setWidth(bounds.getWidth());
+        stage.setHeight(bounds.getHeight());
+        stage.setMaxWidth(bounds.getWidth() * 2);
+        stage.setMaximized(true);
     }
 
     private void loadSampleData(Project project) {

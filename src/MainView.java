@@ -1,5 +1,6 @@
 import javafx.scene.layout.*;
 import javafx.scene.control.*;
+import javafx.stage.Stage;
 
 /**
  * Creates one BorderPane from TaskCreatorView, TaskListView, TimelineView, and MenuBarView
@@ -51,6 +52,7 @@ public class MainView {
 //        taskListPane.setMaxWidth(500);
 
         ScrollPane timelinePane = timelineView.getView();
+        timelinePane.setMinWidth(720);
 
         SplitPane splitPane = new SplitPane();
         splitPane.getItems().addAll(taskCreatorPane, taskListPane, timelinePane);
