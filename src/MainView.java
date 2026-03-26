@@ -1,5 +1,7 @@
+import javafx.geometry.Rectangle2D;
 import javafx.scene.layout.*;
 import javafx.scene.control.*;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 /**
@@ -12,6 +14,7 @@ public class MainView {
     private final int ROW_HEIGHT = 25;
     private final int ROW_GAP = 5;
 
+    private Rectangle2D bounds;
     private MenuBarView menuBarView;
     private TaskCreatorView taskCreatorView;
     private TaskListView taskListView;
@@ -22,7 +25,8 @@ public class MainView {
      *
      * @param projectManager The ProjectManager, passed to four views.
      */
-    public MainView(ProjectManager projectManager) {
+    public MainView(ProjectManager projectManager, Rectangle2D bounds) {
+        this.bounds = bounds;
         menuBarView = new MenuBarView();
         taskCreatorView = new TaskCreatorView(projectManager, this::refreshAll, ROW_GAP);
         taskListView = new TaskListView(projectManager, this::refreshAll, taskCreatorView::loadTask, ROW_GAP, ROW_HEIGHT);
@@ -37,22 +41,23 @@ public class MainView {
      */
     public BorderPane createView() {
         BorderPane borderPane = new BorderPane();
+        double boundsWidth = bounds.getWidth();
 
         MenuBar menuBar = menuBarView.getView();
         borderPane.setTop(menuBar);
 
         VBox taskCreatorPane = taskCreatorView.getView();
         taskCreatorPane.setMinWidth(0);
-//        taskCreatorPane.setPrefWidth(300);
-//        taskCreatorPane.setMaxWidth(Region.USE_PREF_SIZE);
+        taskCreatorPane.setPrefWidth(boundsWidth/4);
+        taskCreatorPane.setMaxWidth(Region.USE_PREF_SIZE);
 
         VBox taskListPane = taskListView.getView();
-//        taskListPane.setMinWidth(Region.USE_PREF_SIZE);
-//        taskListPane.setPrefWidth(250);
-//        taskListPane.setMaxWidth(500);
+        taskListPane.setMinWidth(0);
+        taskListPane.setPrefWidth(boundsWidth/4);
+        taskListPane.setMaxWidth(boundsWidth/2);
 
         ScrollPane timelinePane = timelineView.getView();
-        timelinePane.setMinWidth(720);
+        timelinePane.setMinWidth(boundsWidth/2);
 
         SplitPane splitPane = new SplitPane();
         splitPane.getItems().addAll(taskCreatorPane, taskListPane, timelinePane);

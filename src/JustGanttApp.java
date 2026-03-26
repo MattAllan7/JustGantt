@@ -27,9 +27,8 @@ public class JustGanttApp extends Application {
         loadSampleData(currentProject);
 
         primaryStage.setTitle(currentProject.getName() + " - JustGantt");
-        MainView mainView = new MainView(projectManager);
+        MainView mainView = new MainView(projectManager, setStageSize(primaryStage));
         primaryStage.setScene(new Scene(mainView.createView()));
-        setStageSize(primaryStage);
         primaryStage.show();
     }
 
@@ -39,7 +38,7 @@ public class JustGanttApp extends Application {
      *
      * @param stage The stage to set the size of.
      */
-    private void setStageSize(Stage stage) {
+    private Rectangle2D setStageSize(Stage stage) {
         Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
 
         stage.setX(bounds.getMinX());
@@ -48,6 +47,8 @@ public class JustGanttApp extends Application {
         stage.setHeight(bounds.getHeight());
         stage.setMaxWidth(bounds.getWidth() * 2);
         stage.setMaximized(true);
+
+        return bounds;
     }
 
     private void loadSampleData(Project project) {
