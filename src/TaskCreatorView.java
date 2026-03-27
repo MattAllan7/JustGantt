@@ -61,6 +61,7 @@ public class TaskCreatorView {
 
     private void setupNameRow() {
         HBox nameRow = new HBox();
+
         Label nameLabel = new Label("Name:");
         nameField = new TextField();
         nameRow.getChildren().addAll(nameLabel, nameField);
@@ -69,6 +70,7 @@ public class TaskCreatorView {
 
     private void setupStartDateRow() {
         HBox startDateRow = new HBox();
+
         Label startDateLabel = new Label("Start Date:");
         startDatePicker = new DatePicker(projectManager.getStartDate());
         startDateRow.getChildren().addAll(startDateLabel, startDatePicker);

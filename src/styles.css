@@ -1,0 +1,8 @@
+/* from: https://inside.java/2025/09/23/javafx-25/ */
+/* Automatically applies when the OS is set to Dark Mode */
+@media (prefers-color-scheme: dark) {
+    .root { -fx-base: black; }
+}
+@media (prefers-color-scheme: light) {
+    .root { -fx-base: white; }
+}

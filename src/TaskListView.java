@@ -99,11 +99,11 @@ public class TaskListView {
     private void addHighlightAction(Label label) {
 
         label.setOnMouseEntered(e -> {
-            label.setStyle("-fx-background-color: lightblue;");
+            label.setStyle("-fx-background-color: -fx-selection-bar;");
         });
 
         label.setOnMouseExited(e -> {
-            label.setStyle("-fx-background-color: white;"); // Not actually the background color, fix during UI polish.
+            label.setStyle("");
         });
     }
 

@@ -1,4 +1,5 @@
 import javafx.geometry.Pos;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
@@ -37,6 +38,7 @@ public class TimelineView {
 
     public ScrollPane getView() {
         VBox vBox = new VBox();
+
         vBox.getChildren().addAll(dateAxis, rectangleArea);
 
         ScrollPane timelineWrapper = new ScrollPane();
@@ -105,6 +107,7 @@ public class TimelineView {
         rect.setHeight(rowHeight);
         rect.setArcWidth(arcValue);
         rect.setArcHeight(arcValue);
+        rect.setFill(Color.WHITE);
 
         long startDayNumber = ChronoUnit.DAYS.between(projectManager.getStartDate(), task.getStartDate());
         long spaceInPixels = startDayNumber * PIXELS_PER_DAY;

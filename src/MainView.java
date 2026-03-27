@@ -1,8 +1,6 @@
 import javafx.geometry.Rectangle2D;
 import javafx.scene.layout.*;
 import javafx.scene.control.*;
-import javafx.stage.Screen;
-import javafx.stage.Stage;
 
 /**
  * Creates one BorderPane from TaskCreatorView, TaskListView, TimelineView, and MenuBarView
