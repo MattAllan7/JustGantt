@@ -107,7 +107,7 @@ public class TimelineView {
         rect.setHeight(rowHeight);
         rect.setArcWidth(arcValue);
         rect.setArcHeight(arcValue);
-        rect.setFill(Color.WHITE);
+        rect.setFill(Color.DODGERBLUE);
 
         long startDayNumber = ChronoUnit.DAYS.between(projectManager.getStartDate(), task.getStartDate());
         long spaceInPixels = startDayNumber * PIXELS_PER_DAY;
