@@ -13,6 +13,7 @@ public class MainView {
     private final int ROW_GAP = 5;
 
     private Rectangle2D bounds;
+    private Runnable updateStageTitle;
     private MenuBarView menuBarView;
     private TaskCreatorView taskCreatorView;
     private TaskListView taskListView;
@@ -23,11 +24,12 @@ public class MainView {
      *
      * @param projectManager The ProjectManager, passed to four views.
      */
-    public MainView(ProjectManager projectManager, Rectangle2D bounds) {
+    public MainView(ProjectManager projectManager, Rectangle2D bounds, Runnable updateStageTitle) {
         this.bounds = bounds;
-        menuBarView = new MenuBarView();
+        this.updateStageTitle = updateStageTitle;
+        menuBarView = new MenuBarView(projectManager, this::refreshAll);
         taskCreatorView = new TaskCreatorView(projectManager, this::refreshAll, ROW_GAP);
-        taskListView = new TaskListView(projectManager, this::refreshAll, taskCreatorView::loadTask, ROW_GAP, ROW_HEIGHT);
+        taskListView = new TaskListView(projectManager, taskCreatorView::loadTask, ROW_GAP, ROW_HEIGHT);
         timelineView = new TimelineView(projectManager, ROW_GAP, ROW_HEIGHT);
     }
 
@@ -72,7 +74,7 @@ public class MainView {
         taskCreatorView.refreshUI();
         taskListView.refreshUI();
         timelineView.refreshUI();
-
+        updateStageTitle.run();
     }
 
 }

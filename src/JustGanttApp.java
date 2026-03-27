@@ -13,6 +13,9 @@ import java.util.ArrayList;
  */
 public class JustGanttApp extends Application {
 
+    private Stage primaryStage;
+    private ProjectManager projectManager;
+
     /**
      * Initializes and launches the primary stage of the JustGantt application.
      *
@@ -22,12 +25,13 @@ public class JustGanttApp extends Application {
     public void start(Stage primaryStage) {
         // Default project:
         Project currentProject = new Project("Untitled", LocalDate.now());
-        ProjectManager projectManager = new ProjectManager(currentProject);
+        projectManager = new ProjectManager(currentProject);
 
         loadSampleData(currentProject);
 
-        primaryStage.setTitle(currentProject.getName() + " - JustGantt");
-        MainView mainView = new MainView(projectManager, setStageSize(primaryStage));
+        this.primaryStage = primaryStage;
+        updateStageTitle();
+        MainView mainView = new MainView(projectManager, setStageSize(primaryStage), this::updateStageTitle);
         Scene mainScene = new Scene(mainView.createView());
         mainScene.getStylesheets().add(getClass().getResource("styles.css").toExternalForm());
         primaryStage.setScene(mainScene);
@@ -59,6 +63,10 @@ public class JustGanttApp extends Application {
         tasks.add(new Task("two", LocalDate.now().plusDays(1), 2));
         tasks.add(new Task("three", LocalDate.now().plusDays(2), 3));
         project.addTasks(tasks);
+    }
+
+    private void updateStageTitle() {
+        primaryStage.setTitle(projectManager.getProjectName() + " - JustGantt");
     }
 
 }

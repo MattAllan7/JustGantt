@@ -113,7 +113,7 @@ public class TimelineView {
         long spaceInPixels = startDayNumber * PIXELS_PER_DAY;
 
         rect.setX(spaceInPixels);
-        rect.setY((rowHeight + rowGap) * index); // index likely needs to change eventually.
+        rect.setY((rowHeight + rowGap) * index);
 
         return rect;
     }

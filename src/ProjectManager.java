@@ -9,9 +9,48 @@ import java.util.ArrayList;
 public class ProjectManager {
 
     private Project project;
+    private String currentFilePath = null;
 
     public ProjectManager(Project project) {
         this.project = project;
+    }
+
+    public boolean hasFilePath() {
+        return currentFilePath != null;
+    }
+
+    public String getCurrentFilePath() {
+        return currentFilePath;
+    }
+
+    public void setCurrentFilePath(String path) {
+        this.currentFilePath = path;
+    }
+
+    public void newProject(String name, LocalDate startDate) {
+        this.project = new Project(name, startDate);
+        this.currentFilePath = null;
+    }
+
+    public void save() {
+        if (currentFilePath == null) {
+            throw new IllegalStateException("No file path set. Use saveAs() first.");
+        }
+        FileManager.saveProject(project, currentFilePath);
+    }
+
+    public void saveAs(String filePath) {
+        this.currentFilePath = filePath;
+        FileManager.saveProject(project, filePath);
+    }
+
+    public void loadFrom(String filePath) {
+        this.project = FileManager.loadProject(filePath);
+        this.currentFilePath = filePath;
+    }
+
+    public String getProjectName() {
+        return project.getName();
     }
 
     public void addTask(String name, LocalDate startDate, int duration) {

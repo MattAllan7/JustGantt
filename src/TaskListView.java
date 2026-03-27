@@ -14,7 +14,6 @@ import java.util.function.Consumer;
 public class TaskListView {
 
     private ProjectManager projectManager;
-    private Runnable onTaskChanged; // Will need for edit and delete.
     private Consumer<Task> onEditTask;
     private int rowGap;
     private int rowHeight;
@@ -22,9 +21,8 @@ public class TaskListView {
     private HBox taskListBar;
     private VBox taskListPane;
 
-    public TaskListView(ProjectManager projectManager, Runnable onTaskChanged, Consumer<Task> onEditTask, int rowGap, int rowHeight) {
+    public TaskListView(ProjectManager projectManager, Consumer<Task> onEditTask, int rowGap, int rowHeight) {
         this.projectManager = projectManager;
-        this.onTaskChanged = onTaskChanged;
         this.onEditTask = onEditTask;
         this.rowGap = rowGap;
         this.rowHeight = rowHeight;

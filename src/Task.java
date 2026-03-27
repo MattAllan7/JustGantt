@@ -8,7 +8,6 @@ public class Task {
 
     private String name;
     private LocalDate startDate;
-    private LocalDate endDate;
     private int duration;
     private float progress;
     private ArrayList<Task> dependencies;
@@ -19,7 +18,6 @@ public class Task {
         this.name = name;
         this.startDate = startDate;
         this.duration = duration;
-        endDate = startDate.plusDays(duration);
         progress = 0;
         dependencies = new ArrayList<>();
     }
@@ -37,7 +35,7 @@ public class Task {
     }
 
     public LocalDate getEndDate() {
-        return endDate;
+        return startDate.plusDays(duration);
     }
 
     public void setName(String name) {
@@ -46,12 +44,10 @@ public class Task {
 
     public void setStartDate(LocalDate startDate) {
         this.startDate = startDate;
-        this.endDate = startDate.plusDays(duration);
     }
 
     public void setDuration(int duration) {
         this.duration = duration;
-        this.endDate = startDate.plusDays(duration);
     }
 
 }
