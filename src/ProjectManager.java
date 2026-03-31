@@ -75,7 +75,7 @@ public class ProjectManager {
         return project.getTasks().remove(task);
     }
 
-    private void updateStartDate(LocalDate startDate) {
+    public void setStartDate(LocalDate startDate) {
         project.setStartDate(startDate);
     }
 

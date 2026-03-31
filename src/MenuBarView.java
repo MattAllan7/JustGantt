@@ -1,9 +1,17 @@
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import javafx.stage.Window;
 
 import java.io.File;
 import java.time.LocalDate;
+import java.util.ArrayList;
 
 /**
  * The menu bar at the top containing items such as "File".
@@ -19,7 +27,7 @@ public class MenuBarView {
     }
 
     /**
-     * Builds and returns the applicaiton menu bar.
+     * Builds and returns the application menu bar.
      * Contains a "File" menu with New, Open, Save, and Save As items.
      *
      * @return The configured MenuBar to be placed at the top of the main view.
@@ -50,7 +58,12 @@ public class MenuBarView {
             handleSaveAs(menuBar.getScene().getWindow());
         });
 
-        file.getItems().addAll(newItem, openItem, saveItem, saveAsItem);
+        MenuItem projectSettingsItem = new MenuItem("Project Settings");
+        projectSettingsItem.setOnAction(e -> {
+            handleProjectSettings();
+        });
+
+        file.getItems().addAll(newItem, openItem, saveItem, saveAsItem, projectSettingsItem);
         menuBar.getMenus().add(file);
 
         return menuBar;
@@ -172,6 +185,81 @@ public class MenuBarView {
                 showError("Failed to save:\n" + e.getMessage());
             }
         }
+    }
+
+    /**
+     * Handles the "Project Settings" menu action.
+     * Opens a new stage, allowing the user to set a new project start date.
+     */
+    private void handleProjectSettings() {
+        Stage projectSettingsStage = new Stage();
+        projectSettingsStage.setTitle("Project Settings");
+        projectSettingsStage.initModality(Modality.APPLICATION_MODAL);
+
+        // Start date row
+        Label startDateLabel = new Label("Project Start Date:");
+        DatePicker startDatePicker = new DatePicker(projectManager.getStartDate());
+
+        HBox startDateRow = new HBox(startDateLabel, startDatePicker);
+        startDateRow.setAlignment(Pos.CENTER_LEFT);
+
+        // Buttons
+        Button saveButton = new Button("Save");
+        Button cancelButton = new Button("Cancel");
+
+        saveButton.setOnAction(e -> {
+            LocalDate newStartDate = startDatePicker.getValue();
+
+            if(!checkStartDateValidity(newStartDate))
+                return;
+
+            projectManager.setStartDate(newStartDate);
+            onProjectChanged.run();
+            projectSettingsStage.close();
+        });
+
+        cancelButton.setOnAction(e -> {
+            projectSettingsStage.close();
+        });
+
+        HBox buttonRow = new HBox(saveButton, cancelButton);
+
+        // Layout
+        VBox layout = new VBox(10, startDateRow, buttonRow);
+        layout.setPadding(new Insets(20));
+        layout.setPrefWidth(350);
+
+        projectSettingsStage.setScene(new Scene(layout));
+        projectSettingsStage.setResizable(false);
+        projectSettingsStage.show();
+
+    }
+
+    /**
+     * Checks whether a new project start date is valid by:
+     *  Ensuring the date is not null,
+     *  Ensuring the date is not after existing task dates.
+     * Shows a corresponding alert message if the date is not allowed.
+     *
+     * @param projectStartDate The new start date being considered.
+     * @return TRUE if the date is valid, FALSE if it is not.
+     */
+    private boolean checkStartDateValidity(LocalDate projectStartDate) {
+
+        if(projectStartDate == null) {
+            showError("Invalid start date. ");
+            return false;
+        }
+
+        ArrayList<Task> tasks = projectManager.getTasks();
+        for(Task task : tasks) {
+            if(task.getStartDate().isBefore(projectStartDate)) {
+                showError("Project start date must be before or the same date as all tasks. ");
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**

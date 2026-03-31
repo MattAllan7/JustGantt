@@ -82,7 +82,6 @@ public class TaskListView {
     private void addDoubleClickAction(Label label, Task task) {
         label.setOnMouseClicked(e -> {
             if(e.getClickCount() == 2) {
-                System.out.println("Double");
                 onEditTask.accept(task);
             }
         });
