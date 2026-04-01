@@ -1,3 +1,4 @@
+import java.io.File;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -19,14 +20,6 @@ public class ProjectManager {
         return currentFilePath != null;
     }
 
-    public String getCurrentFilePath() {
-        return currentFilePath;
-    }
-
-    public void setCurrentFilePath(String path) {
-        this.currentFilePath = path;
-    }
-
     public void newProject(String name, LocalDate startDate) {
         this.project = new Project(name, startDate);
         this.currentFilePath = null;
@@ -41,12 +34,20 @@ public class ProjectManager {
 
     public void saveAs(String filePath) {
         this.currentFilePath = filePath;
+        String fileName = new File(filePath).getName();
+
+        String nameFromFile = fileName.endsWith(".gantt") ? fileName.substring(0, fileName.length() - 6) : fileName;
+        project.setName(nameFromFile);
         FileManager.saveProject(project, filePath);
     }
 
     public void loadFrom(String filePath) {
         this.project = FileManager.loadProject(filePath);
         this.currentFilePath = filePath;
+
+        String fileName = new File(filePath).getName();
+        String nameFromFile = fileName.endsWith(".gantt") ? fileName.substring(0, fileName.length() - 6) : fileName;
+        this.project.setName(nameFromFile);
     }
 
     public String getProjectName() {

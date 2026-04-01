@@ -181,6 +181,7 @@ public class MenuBarView {
             }
             try {
                 projectManager.saveAs(path);
+                onProjectChanged.run();
             } catch(Exception e) {
                 showError("Failed to save:\n" + e.getMessage());
             }
