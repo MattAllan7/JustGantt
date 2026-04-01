@@ -54,17 +54,17 @@ public class ProjectManager {
         return project.getName();
     }
 
-    public void addTask(String name, LocalDate startDate, int duration) {
+    public void setProjectName(String name) {
+        project.setName(name);
+    }
 
+    public void addTask(String name, LocalDate startDate, int duration) {
         validateTaskInputs(name, startDate);
 
-        Task task = new Task(name, startDate, duration);
-
-        project.addTask(task);
+        project.addTask(new Task(name, startDate, duration));
     }
 
     public void updateTask(Task task, String name, LocalDate startDate, int duration) {
-
         validateTaskInputs(name, startDate);
 
         task.setName(name);

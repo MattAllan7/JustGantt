@@ -63,7 +63,7 @@ public class TaskCreatorView {
         HBox nameRow = new HBox();
 
         Label nameLabel = new Label("Name:");
-        nameField = new TextField();
+        nameField = new TextField("Task " + (projectManager.getTasks().size()+1));
         nameRow.getChildren().addAll(nameLabel, nameField);
         taskCreatorPane.getChildren().add(nameRow);
     }
@@ -148,7 +148,7 @@ public class TaskCreatorView {
     }
 
     public void refreshUI() {
-        nameField.clear();
+        nameField.setText("Task " + (projectManager.getTasks().size()+1));
         startDatePicker.setValue(projectManager.getStartDate());
         durationSpinner.getValueFactory().setValue(1);
     }

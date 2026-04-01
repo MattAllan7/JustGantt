@@ -193,28 +193,70 @@ public class MenuBarView {
      * Opens a new stage, allowing the user to set a new project start date.
      */
     private void handleProjectSettings() {
+        // Setup stage
         Stage projectSettingsStage = new Stage();
         projectSettingsStage.setTitle("Project Settings");
         projectSettingsStage.initModality(Modality.APPLICATION_MODAL);
 
-        // Start date row
-        Label startDateLabel = new Label("Project Start Date:");
-        DatePicker startDatePicker = new DatePicker(projectManager.getStartDate());
+        // Rename
+        TextField renameField = new TextField(projectManager.getProjectName());
+        HBox renameRow = getRenameRow(renameField);
 
-        HBox startDateRow = new HBox(startDateLabel, startDatePicker);
-        startDateRow.setAlignment(Pos.CENTER_LEFT);
+        // New start date
+        DatePicker datePicker = new DatePicker(projectManager.getStartDate());
+        HBox dateRow = getDateRow(datePicker);
 
         // Buttons
+        HBox buttonRow = getButtonRow(projectSettingsStage, renameField, datePicker);
+
+        // Output pane
+        VBox outputPane = getOutputPane(renameRow, dateRow, buttonRow);
+
+        // Output stage
+        projectSettingsStage.setScene(new Scene(outputPane));
+        projectSettingsStage.setResizable(false);
+        projectSettingsStage.show();
+
+    }
+
+    private HBox getRenameRow(TextField renameField) {
+        HBox renameRow = new HBox();
+
+        Label renameLabel = new Label("Rename Project:");
+
+        renameRow.getChildren().addAll(renameLabel, renameField);
+        renameRow.setAlignment(Pos.CENTER_LEFT);
+
+        return renameRow;
+    }
+
+    private HBox getDateRow(DatePicker datePicker) {
+        HBox dateRow = new HBox();
+
+        Label dateLabel = new Label("Project Start Date:");
+
+        dateRow.getChildren().addAll(dateLabel, datePicker);
+        dateRow.setAlignment(Pos.CENTER_LEFT);
+
+        return dateRow;
+    }
+
+    private HBox getButtonRow(Stage projectSettingsStage, TextField projectNameField, DatePicker datePicker) {
+        HBox buttonRow = new HBox();
+
         Button saveButton = new Button("Save");
         Button cancelButton = new Button("Cancel");
 
         saveButton.setOnAction(e -> {
-            LocalDate newStartDate = startDatePicker.getValue();
+            String projectName = projectNameField.getText();
+            LocalDate newStartDate = datePicker.getValue();
 
-            if(!checkStartDateValidity(newStartDate))
-                return;
+            if(!checkProjectNameValidity(projectName)) return;
+            if(!checkStartDateValidity(newStartDate)) return;
 
+            projectManager.setProjectName(projectName);
             projectManager.setStartDate(newStartDate);
+
             onProjectChanged.run();
             projectSettingsStage.close();
         });
@@ -223,17 +265,20 @@ public class MenuBarView {
             projectSettingsStage.close();
         });
 
-        HBox buttonRow = new HBox(saveButton, cancelButton);
+        buttonRow.getChildren().addAll(saveButton, cancelButton);
 
-        // Layout
-        VBox layout = new VBox(10, startDateRow, buttonRow);
-        layout.setPadding(new Insets(20));
-        layout.setPrefWidth(350);
+        return buttonRow;
+    }
 
-        projectSettingsStage.setScene(new Scene(layout));
-        projectSettingsStage.setResizable(false);
-        projectSettingsStage.show();
+    private VBox getOutputPane(HBox renameRow, HBox dateRow, HBox buttonRow) {
+        VBox outputPane = new VBox(10, renameRow, dateRow, buttonRow);
+        outputPane.setPadding(new Insets(20));
+        outputPane.setPrefWidth(350);
+        return outputPane;
+    }
 
+    private boolean checkProjectNameValidity(String projectName) {
+        return !projectName.isBlank();
     }
 
     /**

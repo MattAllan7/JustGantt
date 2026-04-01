@@ -23,12 +23,12 @@ public class JustGanttApp extends Application {
      */
     @Override
     public void start(Stage primaryStage) {
-        // Default project:
-        Project currentProject = new Project("Untitled", LocalDate.now());
-        projectManager = new ProjectManager(currentProject);
+        // Default project
+        Project project = new Project("Untitled", LocalDate.now());
+        projectManager = new ProjectManager(project);
+        project.addTask(new Task("Task 1", LocalDate.now().plusDays(1), 4));
 
-        loadSampleData(currentProject);
-
+        // Stage
         this.primaryStage = primaryStage;
         updateStageTitle();
         MainView mainView = new MainView(projectManager, setStageSize(primaryStage), this::updateStageTitle);
@@ -55,14 +55,6 @@ public class JustGanttApp extends Application {
         stage.setMaximized(true);
 
         return bounds;
-    }
-
-    private void loadSampleData(Project project) {
-        ArrayList<Task> tasks = new ArrayList<>();
-        tasks.add(new Task("one", LocalDate.now(), 1));
-        tasks.add(new Task("two", LocalDate.now().plusDays(1), 2));
-        tasks.add(new Task("three", LocalDate.now().plusDays(2), 3));
-        project.addTasks(tasks);
     }
 
     private void updateStageTitle() {
