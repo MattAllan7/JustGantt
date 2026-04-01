@@ -72,8 +72,38 @@ public class ProjectManager {
         task.setDuration(duration);
     }
 
-    public boolean removeTask(Task task) {
-        return project.getTasks().remove(task);
+    public void removeTask(Task task) {
+        project.getTasks().remove(task);
+    }
+
+    /**
+     * Swaps the task at the given index with the one above it.
+     * Does nothing if the task is already at the top.
+     *
+     * @param index The index of the task to move up.
+     */
+    public void moveTaskUp(int index) {
+        ArrayList<Task> tasks = project.getTasks();
+        if(index > 0) {
+            Task temp = tasks.get(index - 1);
+            tasks.set(index - 1, tasks.get(index));
+            tasks.set(index, temp);
+        }
+    }
+
+    /**
+     * Swaps the task at the given index with the one below it.
+     * Does nothing if the task is already at the bottom.
+     *
+     * @param index The index of the task to move down.
+     */
+    public void moveTaskDown(int index) {
+        ArrayList<Task> tasks = project.getTasks();
+        if(index < tasks.size() - 1) {
+            Task temp = tasks.get(index + 1);
+            tasks.set(index + 1, tasks.get(index));
+            tasks.set(index, temp);
+        }
     }
 
     public void setStartDate(LocalDate startDate) {

@@ -36,6 +36,8 @@ public class JustGanttApp extends Application {
         mainScene.getStylesheets().add(getClass().getResource("styles.css").toExternalForm());
         primaryStage.setScene(mainScene);
         primaryStage.show();
+
+        new AutoSaveManager(projectManager).start();
     }
 
     /**

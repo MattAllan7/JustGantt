@@ -145,6 +145,7 @@ public class TaskCreatorView {
         cancelButton.setVisible(false);
         deleteButton.setVisible(false);
         header.setText(CREATE_HEADER);
+        onTaskChanged.run();
     }
 
     public void refreshUI() {

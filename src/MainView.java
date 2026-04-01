@@ -29,7 +29,7 @@ public class MainView {
         this.updateStageTitle = updateStageTitle;
         menuBarView = new MenuBarView(projectManager, this::refreshAll);
         taskCreatorView = new TaskCreatorView(projectManager, this::refreshAll, ROW_GAP);
-        taskListView = new TaskListView(projectManager, taskCreatorView::loadTask, ROW_GAP, ROW_HEIGHT);
+        taskListView = new TaskListView(projectManager, taskCreatorView::loadTask, this::refreshAll, ROW_GAP, ROW_HEIGHT);
         timelineView = new TimelineView(projectManager, ROW_GAP, ROW_HEIGHT);
     }
 
