@@ -26,7 +26,6 @@ public class JustGanttApp extends Application {
         // Default project
         Project project = new Project("Untitled", LocalDate.now());
         projectManager = new ProjectManager(project);
-        project.addTask(new Task("Task 1", LocalDate.now().plusDays(1), 4));
 
         // Stage
         this.primaryStage = primaryStage;

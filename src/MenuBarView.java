@@ -100,19 +100,12 @@ public class MenuBarView {
                 return;
         }
 
-        // Create new project window.
-        TextInputDialog nameDialog = new TextInputDialog("Untitled");
-        nameDialog.setTitle("New Project");
-        nameDialog.setHeaderText(null);
-        nameDialog.setContentText("Project name:");
-        String name = nameDialog.showAndWait().orElse("").trim();
-
-        // Create the new project if a name was entered.
-        if(!name.isBlank()) {
-            projectManager.newProject(name, LocalDate.now());
-            onProjectChanged.run();
-        }
+        // Create new empty project.
+        projectManager.newProject("Untitled", LocalDate.now());
+        onProjectChanged.run();
     }
+
+
 
     /**
      * Handles the "Open" menu action.
