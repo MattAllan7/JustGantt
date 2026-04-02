@@ -82,8 +82,8 @@ public class TaskListView {
 
         HBox buttonBox = buildButtonBox(index, numberOfTasks);
 
-        HBox row = new HBox(label, buttonBox);
-        row.setAlignment(Pos.CENTER_LEFT);                              // MAKE BUTTONS VBOX AND VERTICAL ISNTEAD OF HBOX
+        HBox row = new HBox(rowHeight, label, buttonBox);
+        row.setAlignment(Pos.CENTER_LEFT);
         return row;
 
     }
@@ -103,6 +103,7 @@ public class TaskListView {
     }
 
     private HBox buildButtonBox(int index, int numberOfTasks) {
+
         Button upButton = new Button("▲");
         Button downButton = new Button("▼");
 
@@ -149,11 +150,11 @@ public class TaskListView {
     private void addHighlightAction(Label label) {
 
         label.setOnMouseEntered(e -> {
-            label.setStyle("-fx-background-color: -fx-selection-bar;");
+            label.getStyleClass().add("bg-accent-subtle");
         });
 
         label.setOnMouseExited(e -> {
-            label.setStyle("");
+            label.getStyleClass().remove("bg-accent-subtle");
         });
     }
 

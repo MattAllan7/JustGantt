@@ -11,7 +11,7 @@ import java.util.function.Consumer;
  */
 public class MainView {
 
-    private final int ROW_HEIGHT = 25;
+    private final int ROW_HEIGHT = 30;
     private final int ROW_GAP = 5;
 
     private Rectangle2D bounds;
