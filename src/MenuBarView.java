@@ -12,6 +12,7 @@ import javafx.stage.Window;
 import java.io.File;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.function.Consumer;
 
 /**
  * The menu bar at the top containing items such as "File".
@@ -20,10 +21,12 @@ public class MenuBarView {
 
     private ProjectManager projectManager;
     private Runnable onProjectChanged;
+    private Consumer<String> onThemeChanged;
 
-    public MenuBarView(ProjectManager projectManager, Runnable onProjectChanged) {
+    public MenuBarView(ProjectManager projectManager, Runnable onProjectChanged, Consumer<String> onThemeChanged) {
         this.projectManager = projectManager;
         this.onProjectChanged = onProjectChanged;
+        this.onThemeChanged = onThemeChanged;
     }
 
     /**
@@ -36,7 +39,16 @@ public class MenuBarView {
         MenuBar menuBar = new MenuBar();
         menuBar.setUseSystemMenuBar(true);
 
-        Menu file = new Menu("File");
+        Menu fileMenu = buildFileMenu(menuBar);
+        Menu editMenu = buildEditMenu();
+
+        menuBar.getMenus().addAll(fileMenu, editMenu);
+
+        return menuBar;
+    }
+
+    private Menu buildFileMenu(MenuBar menuBar) {
+        Menu fileMenu = new Menu("File");
 
         MenuItem newItem = new MenuItem("New");
         newItem.setOnAction(e -> {
@@ -63,10 +75,22 @@ public class MenuBarView {
             handleProjectSettings();
         });
 
-        file.getItems().addAll(newItem, openItem, saveItem, saveAsItem, projectSettingsItem);
-        menuBar.getMenus().add(file);
+        fileMenu.getItems().addAll(newItem, openItem, saveItem, saveAsItem, projectSettingsItem);
 
-        return menuBar;
+        return fileMenu;
+    }
+
+    private Menu buildEditMenu() {
+        Menu editMenu = new Menu("Edit");
+
+        MenuItem preferencesItem = new MenuItem("Preferences");
+        preferencesItem.setOnAction(e -> {
+            handlePreferences();
+        });
+
+        editMenu.getItems().add(preferencesItem);
+
+        return editMenu;
     }
 
     /**
@@ -226,7 +250,7 @@ public class MenuBarView {
     private HBox getDateRow(DatePicker datePicker) {
         HBox dateRow = new HBox();
 
-        Label dateLabel = new Label("Project Start Date:");
+        Label dateLabel = new Label("Start Date:");
 
         dateRow.getChildren().addAll(dateLabel, datePicker);
         dateRow.setAlignment(Pos.CENTER_LEFT);
@@ -299,6 +323,64 @@ public class MenuBarView {
         }
 
         return true;
+    }
+
+    /**
+     * Handles the "Preferences" menu action.
+     * Opens a modal dialog with Light / Dark radio buttons.
+     * Applies and persists the chosen theme immediately on Save.
+     */
+    private void handlePreferences() {
+        Stage preferencesStage = new Stage();
+        preferencesStage.setTitle("Preferences");
+        preferencesStage.initModality(Modality.APPLICATION_MODAL);
+        preferencesStage.setResizable(false);
+
+        // Read current saved theme so the correct radio button starts selected.
+        UserPreferences userPreferences = new UserPreferences();
+        String currentTheme = userPreferences.getTheme();
+
+        // Radio buttons
+        ToggleGroup themeGroup = new ToggleGroup();
+
+        RadioButton darkRadio  = new RadioButton("Dark");
+        darkRadio.setToggleGroup(themeGroup);
+        darkRadio.setSelected(UserPreferences.THEME_DARK.equals(currentTheme));
+
+        RadioButton lightRadio = new RadioButton("Light");
+        lightRadio.setToggleGroup(themeGroup);
+        lightRadio.setSelected(UserPreferences.THEME_LIGHT.equals(currentTheme));
+
+        VBox radioBox = new VBox(8, darkRadio, lightRadio);
+
+        Label themeLabel = new Label("Theme:");
+        HBox themeRow = new HBox(12, themeLabel, radioBox);
+        themeRow.setAlignment(Pos.CENTER_LEFT);
+
+        // Buttons
+        Button saveButton = new Button("Save");
+        Button cancelButton = new Button("Cancel");
+
+        saveButton.setOnAction(e -> {
+            String chosen = darkRadio.isSelected() ? UserPreferences.THEME_DARK : UserPreferences.THEME_LIGHT;
+            onThemeChanged.accept(chosen);
+            preferencesStage.close();
+        });
+
+        cancelButton.setOnAction(e -> {
+            preferencesStage.close();
+        });
+
+        HBox buttonRow = new HBox(8, saveButton, cancelButton);
+
+        // Output pane
+        VBox outputPane = new VBox(16, themeRow, buttonRow);
+        outputPane.setPadding(new Insets(20));
+        outputPane.setPrefWidth(220);
+
+        // Output stage
+        preferencesStage.setScene(new Scene(outputPane));
+        preferencesStage.show();
     }
 
     /**

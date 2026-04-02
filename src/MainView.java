@@ -2,6 +2,8 @@ import javafx.geometry.Rectangle2D;
 import javafx.scene.layout.*;
 import javafx.scene.control.*;
 
+import java.util.function.Consumer;
+
 /**
  * Creates one BorderPane from TaskCreatorView, TaskListView, TimelineView, and MenuBarView
  * to be displayed in the primaryStage in JustGanttApp.
@@ -24,10 +26,10 @@ public class MainView {
      *
      * @param projectManager The ProjectManager, passed to four views.
      */
-    public MainView(ProjectManager projectManager, Rectangle2D bounds, Runnable updateStageTitle) {
+    public MainView(ProjectManager projectManager, Rectangle2D bounds, Runnable updateStageTitle, Consumer<String> onThemeChanged) {
         this.bounds = bounds;
         this.updateStageTitle = updateStageTitle;
-        menuBarView = new MenuBarView(projectManager, this::refreshAll);
+        menuBarView = new MenuBarView(projectManager, this::refreshAll, onThemeChanged);
         taskCreatorView = new TaskCreatorView(projectManager, this::refreshAll, ROW_GAP);
         taskListView = new TaskListView(projectManager, taskCreatorView::loadTask, this::refreshAll, ROW_GAP, ROW_HEIGHT);
         timelineView = new TimelineView(projectManager, ROW_GAP, ROW_HEIGHT);
