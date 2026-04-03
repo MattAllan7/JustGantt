@@ -77,13 +77,14 @@ public class TaskListView {
      * @return The completed HBox row.
      */
     private HBox buildTaskRow(Task task, int index, int numberOfTasks) {
-
         Label label = buildLabel(task);
-
         HBox buttonBox = buildButtonBox(index, numberOfTasks);
 
-        HBox row = new HBox(rowHeight, label, buttonBox);
+        HBox row = new HBox(label, buttonBox);
         row.setAlignment(Pos.CENTER_LEFT);
+        row.setMinHeight(rowHeight);
+        row.setPrefHeight(rowHeight);
+        row.setMaxHeight(rowHeight);
         return row;
 
     }
@@ -92,7 +93,9 @@ public class TaskListView {
         Label label = new Label(task.getName());
         label.setFont(Font.font("System", FontWeight.NORMAL, 16));
         label.setAlignment(Pos.CENTER_LEFT);
+        label.setMinHeight(rowHeight);
         label.setPrefHeight(rowHeight);
+        label.setMaxHeight(rowHeight);
         label.setMaxWidth(Double.MAX_VALUE);
         HBox.setHgrow(label, Priority.ALWAYS);
 
@@ -103,9 +106,15 @@ public class TaskListView {
     }
 
     private HBox buildButtonBox(int index, int numberOfTasks) {
-
         Button upButton = new Button("▲");
         Button downButton = new Button("▼");
+
+        upButton.setMinHeight(rowHeight);
+        upButton.setPrefHeight(rowHeight);
+        upButton.setMaxHeight(rowHeight);
+        downButton.setMinHeight(rowHeight);
+        downButton.setPrefHeight(rowHeight);
+        downButton.setMaxHeight(rowHeight);
 
         upButton.setDisable(index == 0);
         downButton.setDisable(index == numberOfTasks - 1);

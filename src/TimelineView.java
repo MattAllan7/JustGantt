@@ -69,7 +69,7 @@ public class TimelineView {
         LocalDate date = projectManager.getStartDate();
         int minimumDaysShown = 25;
         int projectLength = projectManager.getProjectLength();
-        int datesShown = Math.max(minimumDaysShown, projectLength);
+        int datesShown = Math.max(minimumDaysShown, projectLength) + 5;
         for(int i=0; i<datesShown; i++) {
             
             // Label formatting
