@@ -115,21 +115,15 @@ public class MenuBarView {
      */
     private void handleNew() {
         // If there's unsaved work, ask for confirmation.
-        if(!projectManager.hasFilePath()) {
-            Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
-            confirmAlert.setTitle("New Project");
-            confirmAlert.setHeaderText("Unsaved changes will be lost.");
-            confirmAlert.setContentText("Create a new project anyway?");
-            if(confirmAlert.showAndWait().orElse(ButtonType.CANCEL) != ButtonType.OK)
-                return;
-        }
+        String title = "New Project";
+        String header = "Unsaved changes will be lost";
+        String context = "Create a new project anyway?";
+        if(confirmCloseProject(title, header, context)) return;
 
         // Create new empty project.
         projectManager.newProject("Untitled", LocalDate.now());
         onProjectChanged.run();
     }
-
-
 
     /**
      * Handles the "Open" menu action.
@@ -148,12 +142,34 @@ public class MenuBarView {
         // If the user selected a .gantt file, try and load it and update UI.
         if(file != null) {
             try {
+                // If there's unsaved work, ask for confirmation.
+                String title = "Open Project";
+                String header = "Unsaved changes will be lost";
+                String context = "Open an existing project anyway?";
+                if(confirmCloseProject(title, header, context)) return;
+
                 projectManager.loadFrom(file.getAbsolutePath());
                 onProjectChanged.run();
             } catch(Exception e) {
                 showError("Failed to open file:\n" + e.getMessage());
             }
         }
+    }
+
+    /**
+     * Shows an alert when trying to discard a project that is not saved.
+     *
+     * @return True if the user accepts the discard, false if they select cancel.
+     */
+    private boolean confirmCloseProject(String title, String header, String context) {
+        if(!projectManager.hasFilePath()) {
+            Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
+            confirmAlert.setTitle(title);
+            confirmAlert.setHeaderText(header);
+            confirmAlert.setContentText(context);
+            return confirmAlert.showAndWait().orElse(ButtonType.CANCEL) != ButtonType.OK;
+        }
+        return false;
     }
 
     /**
