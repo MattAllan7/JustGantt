@@ -58,8 +58,12 @@ public class MainView {
         taskListPane.setPrefWidth(boundsWidth/4);
         taskListPane.setMaxWidth(boundsWidth/2);
 
-        ScrollPane timelinePane = timelineView.getView();
+        VBox timelinePane = timelineView.getView();
         timelinePane.setMinWidth(boundsWidth/2);
+
+        taskListView.getScrollPane().vvalueProperty().bindBidirectional(
+                timelineView.getScrollPane().vvalueProperty()
+        );
 
         SplitPane splitPane = new SplitPane();
         splitPane.getItems().addAll(taskCreatorPane, taskListPane, timelinePane);

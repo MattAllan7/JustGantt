@@ -21,6 +21,7 @@ public class TaskListView {
 
     private HBox taskListBar;
     private VBox taskListPane;
+    private ScrollPane taskScrollPane;
 
     public TaskListView(ProjectManager projectManager, Consumer<Task> onEditTask, Runnable onTasksReordered, int rowGap, int rowHeight) {
         this.projectManager = projectManager;
@@ -34,16 +35,24 @@ public class TaskListView {
         refreshUI();
     }
 
+    public ScrollPane getScrollPane() {
+        return taskScrollPane;
+    }
+
     public VBox getView() {
         VBox vBox = new VBox();
 
-        vBox.getChildren().addAll(taskListBar, taskListPane);
+        vBox.getChildren().addAll(taskListBar, taskScrollPane);
+        VBox.setVgrow(taskScrollPane, Priority.ALWAYS);
         return vBox;
     }
 
     private void setupTaskListBar() {
         taskListBar = new HBox();
         taskListBar.setAlignment(Pos.CENTER_LEFT);
+
+        taskListBar.setMinHeight(50);
+        taskListBar.setPrefHeight(50);
 
         Label label = new Label("Tasks");
         label.setFont(Font.font("System", FontWeight.BOLD, 24));
@@ -54,6 +63,11 @@ public class TaskListView {
 
     private void setupTaskListPane() {
         taskListPane = new VBox(rowGap);
+
+        taskScrollPane = new ScrollPane(taskListPane);
+        taskScrollPane.setFitToWidth(true);
+        taskScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        taskScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
     }
 
     public void refreshUI() {
@@ -82,6 +96,7 @@ public class TaskListView {
 
         HBox row = new HBox(label, buttonBox);
         row.setAlignment(Pos.CENTER_LEFT);
+
         row.setMinHeight(rowHeight);
         row.setPrefHeight(rowHeight);
         row.setMaxHeight(rowHeight);
