@@ -19,9 +19,9 @@ import java.util.function.Consumer;
  */
 public class MenuBarView {
 
-    private ProjectManager projectManager;
-    private Runnable onProjectChanged;
-    private Consumer<String> onThemeChanged;
+    private final ProjectManager projectManager;
+    private final Runnable onProjectChanged;
+    private final Consumer<String> onThemeChanged;
 
     public MenuBarView(ProjectManager projectManager, Runnable onProjectChanged, Consumer<String> onThemeChanged) {
         this.projectManager = projectManager;
@@ -51,29 +51,19 @@ public class MenuBarView {
         Menu fileMenu = new Menu("File");
 
         MenuItem newItem = new MenuItem("New");
-        newItem.setOnAction(e -> {
-            handleNew();
-        });
+        newItem.setOnAction(_ -> handleNew());
 
         MenuItem openItem = new MenuItem("Open");
-        openItem.setOnAction(e -> {
-            handleOpen(menuBar.getScene().getWindow());
-        });
+        openItem.setOnAction(_ -> handleOpen(menuBar.getScene().getWindow()));
 
         MenuItem saveItem = new MenuItem("Save");
-        saveItem.setOnAction(e -> {
-            handleSave(menuBar.getScene().getWindow());
-        });
+        saveItem.setOnAction(_ -> handleSave(menuBar.getScene().getWindow()));
 
         MenuItem saveAsItem = new MenuItem("Save As");
-        saveAsItem.setOnAction(e -> {
-            handleSaveAs(menuBar.getScene().getWindow());
-        });
+        saveAsItem.setOnAction(_ -> handleSaveAs(menuBar.getScene().getWindow()));
 
         MenuItem projectSettingsItem = new MenuItem("Project Settings");
-        projectSettingsItem.setOnAction(e -> {
-            handleProjectSettings();
-        });
+        projectSettingsItem.setOnAction(_ -> handleProjectSettings());
 
         fileMenu.getItems().addAll(newItem, openItem, saveItem, saveAsItem, projectSettingsItem);
 
@@ -84,9 +74,7 @@ public class MenuBarView {
         Menu editMenu = new Menu("Edit");
 
         MenuItem preferencesItem = new MenuItem("Preferences");
-        preferencesItem.setOnAction(e -> {
-            handlePreferences();
-        });
+        preferencesItem.setOnAction(_ -> handlePreferences());
 
         editMenu.getItems().add(preferencesItem);
 
@@ -233,17 +221,17 @@ public class MenuBarView {
 
         // Rename
         TextField renameField = new TextField(projectManager.getProjectName());
-        HBox renameRow = getRenameRow(renameField);
+        HBox renameRow = buildRenameRow(renameField);
 
         // New start date
         DatePicker datePicker = new DatePicker(projectManager.getStartDate());
-        HBox dateRow = getDateRow(datePicker);
+        HBox dateRow = buildDateRow(datePicker);
 
         // Buttons
-        HBox buttonRow = getButtonRow(projectSettingsStage, renameField, datePicker);
+        HBox buttonRow = buildProjectSettingsButtons(projectSettingsStage, renameField, datePicker);
 
         // Output pane
-        VBox outputPane = getOutputPane(renameRow, dateRow, buttonRow);
+        VBox outputPane = buildProjectSettingsPane(renameRow, dateRow, buttonRow);
 
         // Output stage
         projectSettingsStage.setScene(new Scene(outputPane));
@@ -252,8 +240,8 @@ public class MenuBarView {
 
     }
 
-    private HBox getRenameRow(TextField renameField) {
-        HBox renameRow = new HBox();
+    private HBox buildRenameRow(TextField renameField) {
+        HBox renameRow = new HBox(LayoutValues.NODE_SPACING);
 
         Label renameLabel = new Label("Rename Project:");
 
@@ -263,7 +251,7 @@ public class MenuBarView {
         return renameRow;
     }
 
-    private HBox getDateRow(DatePicker datePicker) {
+    private HBox buildDateRow(DatePicker datePicker) {
         HBox dateRow = new HBox();
 
         Label dateLabel = new Label("Start Date:");
@@ -274,13 +262,13 @@ public class MenuBarView {
         return dateRow;
     }
 
-    private HBox getButtonRow(Stage projectSettingsStage, TextField projectNameField, DatePicker datePicker) {
-        HBox buttonRow = new HBox();
+    private HBox buildProjectSettingsButtons(Stage projectSettingsStage, TextField projectNameField, DatePicker datePicker) {
+        HBox buttonRow = new HBox(LayoutValues.NODE_SPACING);
 
         Button saveButton = new Button("Save");
         Button cancelButton = new Button("Cancel");
 
-        saveButton.setOnAction(e -> {
+        saveButton.setOnAction(_ -> {
             String projectName = projectNameField.getText();
             LocalDate newStartDate = datePicker.getValue();
 
@@ -294,20 +282,19 @@ public class MenuBarView {
             projectSettingsStage.close();
         });
 
-        cancelButton.setOnAction(e -> {
-            projectSettingsStage.close();
-        });
+        cancelButton.setOnAction(_ -> projectSettingsStage.close());
 
         buttonRow.getChildren().addAll(saveButton, cancelButton);
 
         return buttonRow;
     }
 
-    private VBox getOutputPane(HBox renameRow, HBox dateRow, HBox buttonRow) {
-        VBox outputPane = new VBox(10, renameRow, dateRow, buttonRow);
-        outputPane.setPadding(new Insets(20));
-        outputPane.setPrefWidth(350);
-        return outputPane;
+    private VBox buildProjectSettingsPane(HBox renameRow, HBox dateRow, HBox buttonRow) {
+        VBox projectSettingsPane = new VBox(LayoutValues.POPUP_NODE_SPACING, renameRow, dateRow, buttonRow);
+        projectSettingsPane.setPadding(new Insets(LayoutValues.POPUP_NODE_SPACING));
+        projectSettingsPane.setPrefWidth(LayoutValues.POPUP_WIDTH);
+
+        return projectSettingsPane;
     }
 
     private boolean checkProjectNameValidity(String projectName) {
@@ -352,51 +339,70 @@ public class MenuBarView {
         preferencesStage.initModality(Modality.APPLICATION_MODAL);
         preferencesStage.setResizable(false);
 
+        // Radio buttons
+        RadioButton darkRadio = new RadioButton("Dark");
+        RadioButton lightRadio = new RadioButton("Light");
+        HBox themePane = buildPreferencesRadios(darkRadio, lightRadio);
+
+        // Buttons
+        HBox buttonRow = buildPreferencesButtons(preferencesStage, darkRadio);
+
+        // Output pane
+        VBox preferencesPane = buildPreferencesPane(themePane, buttonRow);
+
+        // Output stage
+        preferencesStage.setScene(new Scene(preferencesPane));
+        preferencesStage.setResizable(false);
+        preferencesStage.show();
+    }
+
+    private HBox buildPreferencesRadios(RadioButton darkRadio, RadioButton lightRadio) {
         // Read current saved theme so the correct radio button starts selected.
         UserPreferences userPreferences = new UserPreferences();
         String currentTheme = userPreferences.getTheme();
 
-        // Radio buttons
-        ToggleGroup themeGroup = new ToggleGroup();
+        // Build radio buttons.
+        ToggleGroup themeToggleGroup = new ToggleGroup();
 
-        RadioButton darkRadio  = new RadioButton("Dark");
-        darkRadio.setToggleGroup(themeGroup);
+        darkRadio.setToggleGroup(themeToggleGroup);
         darkRadio.setSelected(UserPreferences.THEME_DARK.equals(currentTheme));
 
-        RadioButton lightRadio = new RadioButton("Light");
-        lightRadio.setToggleGroup(themeGroup);
+        lightRadio.setToggleGroup(themeToggleGroup);
         lightRadio.setSelected(UserPreferences.THEME_LIGHT.equals(currentTheme));
 
-        VBox radioBox = new VBox(8, darkRadio, lightRadio);
+        VBox radioBox = new VBox(LayoutValues.NODE_SPACING, darkRadio, lightRadio);
 
+        // Build pane.
         Label themeLabel = new Label("Theme:");
-        HBox themeRow = new HBox(12, themeLabel, radioBox);
-        themeRow.setAlignment(Pos.CENTER_LEFT);
 
-        // Buttons
+        HBox themePane = new HBox(LayoutValues.POPUP_NODE_SPACING, themeLabel, radioBox);
+        themePane.setAlignment(Pos.CENTER_LEFT);
+
+        return themePane;
+    }
+
+    private HBox buildPreferencesButtons(Stage preferencesStage, RadioButton darkRadio) {
+
         Button saveButton = new Button("Save");
         Button cancelButton = new Button("Cancel");
 
-        saveButton.setOnAction(e -> {
+        saveButton.setOnAction(_ -> {
             String chosen = darkRadio.isSelected() ? UserPreferences.THEME_DARK : UserPreferences.THEME_LIGHT;
             onThemeChanged.accept(chosen);
             preferencesStage.close();
         });
 
-        cancelButton.setOnAction(e -> {
-            preferencesStage.close();
-        });
+        cancelButton.setOnAction(_ -> preferencesStage.close());
 
-        HBox buttonRow = new HBox(8, saveButton, cancelButton);
+        return new HBox(LayoutValues.NODE_SPACING, saveButton, cancelButton);
+    }
 
-        // Output pane
-        VBox outputPane = new VBox(16, themeRow, buttonRow);
-        outputPane.setPadding(new Insets(20));
-        outputPane.setPrefWidth(220);
+    private VBox buildPreferencesPane(HBox themePane, HBox buttonRow) {
+        VBox preferencesPane = new VBox(LayoutValues.POPUP_NODE_SPACING, themePane, buttonRow);
+        preferencesPane.setPadding(new Insets(LayoutValues.POPUP_NODE_SPACING));
+        preferencesPane.setPrefWidth(LayoutValues.POPUP_WIDTH);
 
-        // Output stage
-        preferencesStage.setScene(new Scene(outputPane));
-        preferencesStage.show();
+        return preferencesPane;
     }
 
     /**

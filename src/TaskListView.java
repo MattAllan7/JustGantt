@@ -1,8 +1,7 @@
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.layout.*;
 import javafx.scene.control.*;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 
 import java.util.ArrayList;
 import java.util.function.Consumer;
@@ -13,34 +12,36 @@ import java.util.function.Consumer;
  */
 public class TaskListView {
 
-    private ProjectManager projectManager;
-    private Consumer<Task> onEditTask;
-    private Runnable onTasksReordered;
-    private int rowGap;
-    private int rowHeight;
+    private final ProjectManager projectManager;
+    private final Consumer<Task> onEditTask;
+    private final Runnable onTasksReordered;
 
     private HBox taskListBar;
     private VBox taskListPane;
     private ScrollPane taskScrollPane;
 
-    public TaskListView(ProjectManager projectManager, Consumer<Task> onEditTask, Runnable onTasksReordered, int rowGap, int rowHeight) {
+    public TaskListView(ProjectManager projectManager, Consumer<Task> onEditTask, Runnable onTasksReordered) {
         this.projectManager = projectManager;
         this.onEditTask = onEditTask;
         this.onTasksReordered = onTasksReordered;
-        this.rowGap = rowGap;
-        this.rowHeight = rowHeight;
 
         setupTaskListBar();
         setupTaskListPane();
         refreshUI();
     }
 
+    /**
+     * Used to bind to the timeline scrollbar.
+     *
+     * @return The task list scroll pane.
+     */
     public ScrollPane getScrollPane() {
         return taskScrollPane;
     }
 
     public VBox getView() {
-        VBox vBox = new VBox();
+        VBox vBox = new VBox(LayoutValues.NODE_SPACING);
+        vBox.setPadding(new Insets(LayoutValues.NODE_SPACING));
 
         vBox.getChildren().addAll(taskListBar, taskScrollPane);
         VBox.setVgrow(taskScrollPane, Priority.ALWAYS);
@@ -51,18 +52,18 @@ public class TaskListView {
         taskListBar = new HBox();
         taskListBar.setAlignment(Pos.CENTER_LEFT);
 
-        taskListBar.setMinHeight(50);
-        taskListBar.setPrefHeight(50);
+        taskListBar.setMinHeight(LayoutValues.HEADER_HEIGHT);
+        taskListBar.setPrefHeight(LayoutValues.HEADER_HEIGHT);
 
         Label label = new Label("Tasks");
-        label.setFont(Font.font("System", FontWeight.BOLD, 24));
-        label.setPrefHeight(50); // Get all formatting from MainView eventually.
+        label.setFont(LayoutValues.HEADER_FONT);
+        label.setPrefHeight(LayoutValues.HEADER_HEIGHT); // Get all formatting from MainView eventually.
 
         taskListBar.getChildren().add(label);
     }
 
     private void setupTaskListPane() {
-        taskListPane = new VBox(rowGap);
+        taskListPane = new VBox(LayoutValues.NODE_SPACING);
 
         taskScrollPane = new ScrollPane(taskListPane);
         taskScrollPane.setFitToWidth(true);
@@ -97,20 +98,20 @@ public class TaskListView {
         HBox row = new HBox(label, buttonBox);
         row.setAlignment(Pos.CENTER_LEFT);
 
-        row.setMinHeight(rowHeight);
-        row.setPrefHeight(rowHeight);
-        row.setMaxHeight(rowHeight);
+        row.setMinHeight(LayoutValues.ROW_HEIGHT);
+        row.setPrefHeight(LayoutValues.ROW_HEIGHT);
+        row.setMaxHeight(LayoutValues.ROW_HEIGHT);
         return row;
 
     }
 
     private Label buildLabel(Task task) {
         Label label = new Label(task.getName());
-        label.setFont(Font.font("System", FontWeight.NORMAL, 16));
+        label.setFont(LayoutValues.NORMAL_FONT);
         label.setAlignment(Pos.CENTER_LEFT);
-        label.setMinHeight(rowHeight);
-        label.setPrefHeight(rowHeight);
-        label.setMaxHeight(rowHeight);
+        label.setMinHeight(LayoutValues.ROW_HEIGHT);
+        label.setPrefHeight(LayoutValues.ROW_HEIGHT);
+        label.setMaxHeight(LayoutValues.ROW_HEIGHT);
         label.setMaxWidth(Double.MAX_VALUE);
         HBox.setHgrow(label, Priority.ALWAYS);
 
@@ -124,22 +125,22 @@ public class TaskListView {
         Button upButton = new Button("▲");
         Button downButton = new Button("▼");
 
-        upButton.setMinHeight(rowHeight);
-        upButton.setPrefHeight(rowHeight);
-        upButton.setMaxHeight(rowHeight);
-        downButton.setMinHeight(rowHeight);
-        downButton.setPrefHeight(rowHeight);
-        downButton.setMaxHeight(rowHeight);
+        upButton.setMinHeight(LayoutValues.ROW_HEIGHT);
+        upButton.setPrefHeight(LayoutValues.ROW_HEIGHT);
+        upButton.setMaxHeight(LayoutValues.ROW_HEIGHT);
+        downButton.setMinHeight(LayoutValues.ROW_HEIGHT);
+        downButton.setPrefHeight(LayoutValues.ROW_HEIGHT);
+        downButton.setMaxHeight(LayoutValues.ROW_HEIGHT);
 
         upButton.setDisable(index == 0);
         downButton.setDisable(index == numberOfTasks - 1);
 
-        upButton.setOnAction(e -> {
+        upButton.setOnAction(_ -> {
             projectManager.moveTaskUp(index);
             onTasksReordered.run();
         });
 
-        downButton.setOnAction(e -> {
+        downButton.setOnAction(_ -> {
             projectManager.moveTaskDown(index);
             onTasksReordered.run();
         });
@@ -173,13 +174,9 @@ public class TaskListView {
      */
     private void addHighlightAction(Label label) {
 
-        label.setOnMouseEntered(e -> {
-            label.getStyleClass().add("bg-accent-subtle");
-        });
+        label.setOnMouseEntered(_ -> label.getStyleClass().add("bg-accent-subtle"));
 
-        label.setOnMouseExited(e -> {
-            label.getStyleClass().remove("bg-accent-subtle");
-        });
+        label.setOnMouseExited(_ -> label.getStyleClass().remove("bg-accent-subtle"));
     }
 
 }

@@ -13,7 +13,7 @@ public class AutoSaveManager {
         this.projectManager = projectManager;
 
         timeline = new Timeline(new KeyFrame(Duration.seconds(INTERVAL_SECONDS),
-                e -> autoSave()));
+                _ -> autoSave()));
 
         timeline.setCycleCount(Timeline.INDEFINITE);
     }

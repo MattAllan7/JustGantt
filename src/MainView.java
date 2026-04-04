@@ -11,15 +11,13 @@ import java.util.function.Consumer;
  */
 public class MainView {
 
-    private final int ROW_HEIGHT = 30;
-    private final int ROW_GAP = 5;
+    private final Rectangle2D bounds;
+    private final Runnable updateStageTitle;
 
-    private Rectangle2D bounds;
-    private Runnable updateStageTitle;
-    private MenuBarView menuBarView;
-    private TaskCreatorView taskCreatorView;
-    private TaskListView taskListView;
-    private TimelineView timelineView;
+    private final MenuBarView menuBarView;
+    private final TaskCreatorView taskCreatorView;
+    private final TaskListView taskListView;
+    private final TimelineView timelineView;
 
     /**
      * Constructor which initializes the four views.
@@ -30,9 +28,9 @@ public class MainView {
         this.bounds = bounds;
         this.updateStageTitle = updateStageTitle;
         menuBarView = new MenuBarView(projectManager, this::refreshAll, onThemeChanged);
-        taskCreatorView = new TaskCreatorView(projectManager, this::refreshAll, ROW_GAP);
-        taskListView = new TaskListView(projectManager, taskCreatorView::loadTask, this::refreshAll, ROW_GAP, ROW_HEIGHT);
-        timelineView = new TimelineView(projectManager, ROW_GAP, ROW_HEIGHT);
+        taskCreatorView = new TaskCreatorView(projectManager, this::refreshAll);
+        taskListView = new TaskListView(projectManager, taskCreatorView::loadTask, this::refreshAll);
+        timelineView = new TimelineView(projectManager);
     }
 
     /**
@@ -66,8 +64,9 @@ public class MainView {
         );
 
         SplitPane splitPane = new SplitPane();
+        splitPane.setDividerPositions(0.25, 0.5);
         splitPane.getItems().addAll(taskCreatorPane, taskListPane, timelinePane);
-        splitPane.setDividerPositions(0.25f, 0.5f);
+
         borderPane.setCenter(splitPane);
 
         return borderPane;

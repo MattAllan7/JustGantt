@@ -1,7 +1,7 @@
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.layout.*;
 import javafx.scene.control.*;
@@ -17,51 +17,51 @@ import java.util.ArrayList;
  */
 public class TimelineView {
 
-    public final int PIXELS_PER_DAY = 40;
-
-    private ProjectManager projectManager;
-    private int rowGap;
-    private int rowHeight;
+    private final ProjectManager projectManager;
 
     private HBox dateAxis;
     private Pane rectangleArea;
     private ScrollPane headerScrollPane;
     private ScrollPane contentScrollPane;
 
-    public TimelineView(ProjectManager projectManager, int rowGap, int rowHeight) {
+    public TimelineView(ProjectManager projectManager) {
         this.projectManager = projectManager;
-        this.rowGap = rowGap;
-        this.rowHeight = rowHeight;
 
         setupDateAxis();
         setupRectangleArea();
         refreshUI();
     }
 
+    /**
+     * Used to bind to the timeline scrollbar.
+     *
+     * @return The task list scroll pane.
+     */
     public ScrollPane getScrollPane() {
         return contentScrollPane;
     }
 
     public VBox getView() {
-        VBox container = new VBox(headerScrollPane, contentScrollPane);
+        VBox vBox = new VBox(LayoutValues.NODE_SPACING, headerScrollPane, contentScrollPane);
+        vBox.setPadding(new Insets(LayoutValues.NODE_SPACING));
         VBox.setVgrow(contentScrollPane, Priority.ALWAYS);
-        return container;
+        return vBox;
     }
 
     private void setupDateAxis() {
         dateAxis = new HBox();
-        dateAxis.setMinHeight(50);
-        dateAxis.setPrefHeight(50);
-        dateAxis.setAlignment(Pos.CENTER);
+        dateAxis.setMinHeight(LayoutValues.HEADER_HEIGHT);
+        dateAxis.setPrefHeight(LayoutValues.HEADER_HEIGHT);
+        dateAxis.setMaxHeight(LayoutValues.HEADER_HEIGHT);
+        dateAxis.setAlignment(Pos.TOP_CENTER);
 
         headerScrollPane = new ScrollPane(dateAxis);
-        headerScrollPane.setMinHeight(50);
-        headerScrollPane.setPrefHeight(50);
-        headerScrollPane.setMaxHeight(50);
+        headerScrollPane.setMinHeight(LayoutValues.HEADER_HEIGHT);
+        headerScrollPane.setPrefHeight(LayoutValues.HEADER_HEIGHT);
+        headerScrollPane.setMaxHeight(LayoutValues.HEADER_HEIGHT);
         headerScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         headerScrollPane.setFitToHeight(true);
         headerScrollPane.setFitToWidth(false);
-
         headerScrollPane.hvalueProperty().addListener((obs, oldVal, newVal) ->
                 contentScrollPane.setHvalue(newVal.doubleValue())
         );
@@ -93,18 +93,17 @@ public class TimelineView {
         dateAxis.getChildren().clear();
 
         LocalDate date = projectManager.getStartDate();
-        int minimumDaysShown = 25;
         int projectLength = projectManager.getProjectLength();
-        int datesShown = Math.max(minimumDaysShown, projectLength) + 5;
+        int datesShown = Math.max(LayoutValues.MINIMUM_DAYS, projectLength) + LayoutValues.EXTRA_DAYS;
         for(int i=0; i<datesShown; i++) {
             // Label formatting
             Label label = new Label();
-            label.setFont(new Font(12));
+            label.setFont(LayoutValues.NORMAL_FONT);
             label.setTextAlignment(TextAlignment.CENTER);
             label.setAlignment(Pos.CENTER);
-            label.setPrefWidth(PIXELS_PER_DAY);
-            label.setMinWidth(PIXELS_PER_DAY);
-            label.setMaxWidth(PIXELS_PER_DAY);
+            label.setPrefWidth(LayoutValues.PIXELS_PER_DAY);
+            label.setMinWidth(LayoutValues.PIXELS_PER_DAY);
+            label.setMaxWidth(LayoutValues.PIXELS_PER_DAY);
 
             // Label text and displaying
             String month = date.getMonth().toString().substring(0, 3);
@@ -126,28 +125,25 @@ public class TimelineView {
     }
 
     private double getTimelineWidth() {
-        int minimumDaysShown = 25;
         int projectLength = projectManager.getProjectLength();
-        int datesShown = Math.max(minimumDaysShown, projectLength) + 5;
+        int datesShown = Math.max(LayoutValues.MINIMUM_DAYS, projectLength) + LayoutValues.EXTRA_DAYS;
 
-        return datesShown * PIXELS_PER_DAY;
+        return datesShown * LayoutValues.PIXELS_PER_DAY;
     }
 
     private Rectangle toRectangle(Task task, int index) {
-        int arcValue = 10;
-
         Rectangle rect = new Rectangle();
-        rect.setWidth(task.getDuration() * PIXELS_PER_DAY);
-        rect.setHeight(rowHeight);
-        rect.setArcWidth(arcValue);
-        rect.setArcHeight(arcValue);
+        rect.setWidth(task.getDuration() * LayoutValues.PIXELS_PER_DAY);
+        rect.setHeight(LayoutValues.ROW_HEIGHT);
+        rect.setArcWidth(LayoutValues.RECTANGLE_ARC);
+        rect.setArcHeight(LayoutValues.RECTANGLE_ARC);
         rect.setFill(Color.DODGERBLUE);
 
         long startDayNumber = ChronoUnit.DAYS.between(projectManager.getStartDate(), task.getStartDate());
-        long spaceInPixels = startDayNumber * PIXELS_PER_DAY;
+        double spaceInPixels = startDayNumber * LayoutValues.PIXELS_PER_DAY;
 
         rect.setX(spaceInPixels);
-        rect.setY((rowHeight + rowGap) * index);
+        rect.setY((LayoutValues.ROW_HEIGHT + LayoutValues.NODE_SPACING) * index);
 
         return rect;
     }

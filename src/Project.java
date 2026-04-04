@@ -21,10 +21,6 @@ public class Project {
         tasks.add(task);
     }
 
-    public void addTasks(ArrayList<Task> tasks) {
-        this.tasks.addAll(tasks);
-    }
-
     public String getName() {
         return name;
     }

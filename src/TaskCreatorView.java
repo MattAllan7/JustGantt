@@ -1,8 +1,9 @@
+import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
-import javafx.scene.text.FontWeight;
 
 /**
  * The left view.
@@ -10,16 +11,14 @@ import javafx.scene.text.FontWeight;
  */
 public class TaskCreatorView {
 
-    private ProjectManager projectManager;
-    private Runnable onTaskChanged;
-    private int rowGap;
+    private final ProjectManager projectManager;
+    private final Runnable onTaskChanged;
 
     private Task editingTask = null;
     private Button addSaveButton;
     private Button cancelButton;
     private Button deleteButton;
     private final String CREATE_HEADER = "Create New Task";
-    private final String EDIT_HEADER = "Edit Task";
 
     private Label header;
     private VBox taskCreatorPane;
@@ -28,17 +27,17 @@ public class TaskCreatorView {
     private DatePicker startDatePicker;
     private Spinner<Integer> durationSpinner;
 
-    public TaskCreatorView(ProjectManager projectManager, Runnable onTaskChanged, int rowGap) {
+    public TaskCreatorView(ProjectManager projectManager, Runnable onTaskChanged) {
         this.projectManager = projectManager;
         this.onTaskChanged = onTaskChanged;
-        this.rowGap = rowGap;
 
         setupHeader();
         setupTaskCreatorPane();
     }
 
     public VBox getView() {
-        VBox vBox = new VBox();
+        VBox vBox = new VBox(LayoutValues.NODE_SPACING);
+        vBox.setPadding(new Insets(LayoutValues.NODE_SPACING));
 
         vBox.getChildren().addAll(header, taskCreatorPane);
         return vBox;
@@ -46,12 +45,12 @@ public class TaskCreatorView {
 
     private void setupHeader() {
         header = new Label(CREATE_HEADER);
-        header.setFont(Font.font("System", FontWeight.BOLD, 24));
-        header.setPrefHeight(50); // Get all formatting from MainView eventually.
+        header.setFont(LayoutValues.HEADER_FONT);
+        header.setPrefHeight(LayoutValues.HEADER_HEIGHT); // Get all formatting from MainView eventually.
     }
 
     private void setupTaskCreatorPane() {
-        taskCreatorPane = new VBox(rowGap);
+        taskCreatorPane = new VBox(LayoutValues.NODE_SPACING);
 
         setupNameRow();
         setupStartDateRow();
@@ -64,7 +63,14 @@ public class TaskCreatorView {
 
         Label nameLabel = new Label("Name:");
         nameField = new TextField("Task " + (projectManager.getTasks().size()+1));
-        nameRow.getChildren().addAll(nameLabel, nameField);
+        nameField.setMinWidth(LayoutValues.FIELD_WIDTH);
+        nameField.setPrefWidth(LayoutValues.FIELD_WIDTH);
+        nameField.setMaxWidth(LayoutValues.FIELD_WIDTH);
+
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+
+        nameRow.getChildren().addAll(nameLabel, spacer, nameField);
         taskCreatorPane.getChildren().add(nameRow);
     }
 
@@ -73,7 +79,14 @@ public class TaskCreatorView {
 
         Label startDateLabel = new Label("Start Date:");
         startDatePicker = new DatePicker(projectManager.getStartDate());
-        startDateRow.getChildren().addAll(startDateLabel, startDatePicker);
+        startDatePicker.setMinWidth(LayoutValues.FIELD_WIDTH);
+        startDatePicker.setPrefWidth(LayoutValues.FIELD_WIDTH);
+        startDatePicker.setMaxWidth(LayoutValues.FIELD_WIDTH);
+
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+
+        startDateRow.getChildren().addAll(startDateLabel, spacer, startDatePicker);
         taskCreatorPane.getChildren().add(startDateRow);
     }
 
@@ -82,50 +95,55 @@ public class TaskCreatorView {
         Label durationLabel = new Label("Duration:");
 
         int minValue = 1;
-        int maxValue = 100;
+        int maxValue = 1000;
         int initialValue = 1;
         durationSpinner = new Spinner<>();
         SpinnerValueFactory.IntegerSpinnerValueFactory valueFactory =
                 new SpinnerValueFactory.IntegerSpinnerValueFactory(minValue, maxValue, initialValue);
         durationSpinner.setValueFactory(valueFactory);
-        durationSpinner.setEditable(true);
 
-        durationRow.getChildren().addAll(durationLabel, durationSpinner);
+        durationSpinner.setEditable(true);
+        durationSpinner.setMinWidth(LayoutValues.FIELD_WIDTH);
+        durationSpinner.setPrefWidth(LayoutValues.FIELD_WIDTH);
+        durationSpinner.setMaxWidth(LayoutValues.FIELD_WIDTH);
+
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+
+        durationRow.getChildren().addAll(durationLabel, spacer, durationSpinner);
         taskCreatorPane.getChildren().add(durationRow);
     }
 
     private void setupButtonRow() {
-        // <<< Add/Save button >>>
+        // Add/Save button
         addSaveButton = new Button("Add");
         updateAddSaveButton();
 
-        // <<< Cancel button >>>
+        // Cancel button
         cancelButton = new Button("Cancel");
         cancelButton.setVisible(false);
 
-        cancelButton.setOnAction(e -> {
-            clearEditingUI();
-        });
+        cancelButton.setOnAction(_ -> clearEditingUI());
 
-        // <<< Delete button >>>
+        // Delete button
         deleteButton = new Button("Delete");
         deleteButton.setVisible(false);
 
-        deleteButton.setOnAction(e -> {
+        deleteButton.setOnAction(_ -> {
             projectManager.removeTask(editingTask);
             editingTask = null;
             onTaskChanged.run();
             clearEditingUI();
         });
 
-        // <<< Button HBox >>>
-        HBox buttonRow = new HBox(addSaveButton, cancelButton, deleteButton);
+        // Button HBox
+        HBox buttonRow = new HBox(LayoutValues.NODE_SPACING, addSaveButton, cancelButton, deleteButton);
 
         taskCreatorPane.getChildren().add(buttonRow);
     }
 
     private void updateAddSaveButton() {
-        addSaveButton.setOnAction(e -> {
+        addSaveButton.setOnAction(_ -> {
             if(editingTask == null) {
                 // Create
                 projectManager.addTask(nameField.getText(), startDatePicker.getValue(), durationSpinner.getValue());
@@ -160,7 +178,8 @@ public class TaskCreatorView {
         nameField.setText(task.getName());
         startDatePicker.setValue(task.getStartDate());
         durationSpinner.getValueFactory().setValue(task.getDuration());
-        header.setText(EDIT_HEADER);
+        String editHeader = "Edit Task";
+        header.setText(editHeader);
 
         addSaveButton.setText("Save");
         cancelButton.setVisible(true);
