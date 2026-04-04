@@ -1,4 +1,5 @@
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -66,11 +67,11 @@ public class TaskCreatorView {
         nameField.setMinWidth(LayoutValues.FIELD_WIDTH);
         nameField.setPrefWidth(LayoutValues.FIELD_WIDTH);
         nameField.setMaxWidth(LayoutValues.FIELD_WIDTH);
-
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
         nameRow.getChildren().addAll(nameLabel, spacer, nameField);
+        nameRow.setAlignment(Pos.CENTER);
         taskCreatorPane.getChildren().add(nameRow);
     }
 
@@ -87,6 +88,7 @@ public class TaskCreatorView {
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
         startDateRow.getChildren().addAll(startDateLabel, spacer, startDatePicker);
+        startDateRow.setAlignment(Pos.CENTER);
         taskCreatorPane.getChildren().add(startDateRow);
     }
 
@@ -111,6 +113,7 @@ public class TaskCreatorView {
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
         durationRow.getChildren().addAll(durationLabel, spacer, durationSpinner);
+        durationRow.setAlignment(Pos.CENTER);
         taskCreatorPane.getChildren().add(durationRow);
     }
 
