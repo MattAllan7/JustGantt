@@ -58,26 +58,25 @@ public class TimelineView {
         headerScrollPane.setMinHeight(50);
         headerScrollPane.setPrefHeight(50);
         headerScrollPane.setMaxHeight(50);
-        headerScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         headerScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         headerScrollPane.setFitToHeight(true);
         headerScrollPane.setFitToWidth(false);
+
+        headerScrollPane.hvalueProperty().addListener((obs, oldVal, newVal) ->
+                contentScrollPane.setHvalue(newVal.doubleValue())
+        );
+
     }
 
     private void setupRectangleArea() {
         rectangleArea = new Pane();
 
         contentScrollPane = new ScrollPane(rectangleArea);
-        contentScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-        contentScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-        // Do NOT setFitToHeight — that would disable vertical scrolling
+        contentScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+
         contentScrollPane.setFitToHeight(false);
         contentScrollPane.setFitToWidth(false);
 
-        // Keep dateAxis scroll position in sync with the content horizontal scroll
-        contentScrollPane.hvalueProperty().addListener((obs, oldVal, newVal) ->
-                headerScrollPane.setHvalue(newVal.doubleValue())
-        );
     }
 
     public void refreshUI() {
