@@ -146,14 +146,30 @@ public class TaskCreatorView {
         addSaveButton.setOnAction(_ -> {
             if(editingTask == null) {
                 // Create
-                projectManager.addTask(nameField.getText(), startDatePicker.getValue(), durationSpinner.getValue());
+                try {
+                    projectManager.addTask(nameField.getText(), startDatePicker.getValue(), durationSpinner.getValue());
+                    onTaskChanged.run();
+                } catch (IllegalArgumentException _) {
+                    showAlert(
+                            "Task name cannot be blank or null.",
+                            ""
+                    );
+                    throw new IllegalArgumentException("Task name cannot be empty.");
+                }
             } else {
                 // Edit
-                projectManager.updateTask(editingTask, nameField.getText(), startDatePicker.getValue(), durationSpinner.getValue());
-                clearEditingUI();
+                try {
+                    projectManager.updateTask(editingTask, nameField.getText(), startDatePicker.getValue(), durationSpinner.getValue());
+                    clearEditingUI();
+                } catch (IllegalArgumentException _) {
+                    showAlert(
+                            "Task must have a valid start date. \nTask cannot start before the project.",
+                            "To change the Project start date: \nFile > Project Settings."
+                    );
+                }
             }
 
-            onTaskChanged.run();
+
         });
     }
 
@@ -184,6 +200,14 @@ public class TaskCreatorView {
         addSaveButton.setText("Save");
         cancelButton.setVisible(true);
         deleteButton.setVisible(true);
+    }
+
+    private void showAlert(String header, String context) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Notice");
+        alert.setHeaderText(header);
+        alert.setContentText(context);
+        alert.showAndWait();
     }
 
 }

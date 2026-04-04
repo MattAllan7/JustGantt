@@ -13,7 +13,11 @@ public class FileManager {
 
     public static void saveProject(Project project, String filePath) {
         File file = new File(filePath);
-        file.getParentFile().mkdirs();
+
+        File parent = file.getParentFile();
+        if(parent != null && !parent.exists() && !parent.mkdirs()) {
+            throw new RuntimeException("Could not create directory: " + parent.getAbsolutePath());
+        }
 
         try(Writer writer = new FileWriter(file)) {
             gson.toJson(project, writer);

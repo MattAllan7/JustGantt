@@ -21,4 +21,6 @@ public class LayoutValues {
     private final static double NORMAL_FONT_SIZE = 12.0;
     public final static Font NORMAL_FONT = Font.font("System", FontWeight.NORMAL, LayoutValues.NORMAL_FONT_SIZE);
 
+    private LayoutValues() {} // Prevent accidental instantiation.
+
 }

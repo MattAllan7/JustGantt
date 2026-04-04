@@ -1,3 +1,5 @@
+import javafx.scene.control.Alert;
+
 import java.io.File;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -137,15 +139,15 @@ public class ProjectManager {
 
     private void validateTaskInputs(String name, LocalDate startDate) {
         if(name == null || name.isBlank()) {
-            throw new IllegalArgumentException("Task name cannot be empty");
+            throw new IllegalArgumentException("Task name cannot be blank or null.");
         }
 
         if(startDate == null) {
-            throw new IllegalArgumentException("Task must have a start date");
+            throw new IllegalArgumentException("Task must have a start date.");
         }
 
         if(startDate.isBefore(project.getStartDate())) {
-            throw new IllegalArgumentException("Task cannot start before the project");
+            throw new IllegalArgumentException("A task cannot start before the project. ");
         }
 
     }

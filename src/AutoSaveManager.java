@@ -28,7 +28,11 @@ public class AutoSaveManager {
      */
     private void autoSave() {
         if(projectManager.hasFilePath()) {
-            projectManager.save();
+            try {
+                projectManager.save();
+            } catch(Exception e) {
+                System.err.println("Auto-save failed: " + e.getMessage());
+            }
         }
     }
 

@@ -3,6 +3,8 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
@@ -63,7 +65,7 @@ public class MenuBarView {
         saveAsItem.setOnAction(_ -> handleSaveAs(menuBar.getScene().getWindow()));
 
         MenuItem projectSettingsItem = new MenuItem("Project Settings");
-        projectSettingsItem.setOnAction(_ -> handleProjectSettings());
+        projectSettingsItem.setOnAction(_ -> handleProjectSettings("Save"));
 
         fileMenu.getItems().addAll(newItem, openItem, saveItem, saveAsItem, projectSettingsItem);
 
@@ -109,6 +111,7 @@ public class MenuBarView {
         if(confirmCloseProject(title, header, context)) return;
 
         // Create new empty project.
+        handleProjectSettings("Create");
         projectManager.newProject("Untitled", LocalDate.now());
         onProjectChanged.run();
     }
@@ -150,7 +153,7 @@ public class MenuBarView {
      * @return True if the user accepts the discard, false if they select cancel.
      */
     private boolean confirmCloseProject(String title, String header, String context) {
-        if(!projectManager.hasFilePath()) {
+        if(!projectManager.hasFilePath() && !projectManager.getTasks().isEmpty()) {
             Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
             confirmAlert.setTitle(title);
             confirmAlert.setHeaderText(header);
@@ -213,7 +216,7 @@ public class MenuBarView {
      * Handles the "Project Settings" menu action.
      * Opens a new stage, allowing the user to set a new project start date.
      */
-    private void handleProjectSettings() {
+    private void handleProjectSettings(String saveCreateButtonName) {
         // Setup stage
         Stage projectSettingsStage = new Stage();
         projectSettingsStage.setTitle("Project Settings");
@@ -228,7 +231,7 @@ public class MenuBarView {
         HBox dateRow = buildDateRow(datePicker);
 
         // Buttons
-        HBox buttonRow = buildProjectSettingsButtons(projectSettingsStage, renameField, datePicker);
+        HBox buttonRow = buildProjectSettingsButtons(projectSettingsStage, renameField, datePicker, saveCreateButtonName);
 
         // Output pane
         VBox outputPane = buildProjectSettingsPane(renameRow, dateRow, buttonRow);
@@ -243,9 +246,16 @@ public class MenuBarView {
     private HBox buildRenameRow(TextField renameField) {
         HBox renameRow = new HBox(LayoutValues.NODE_SPACING);
 
-        Label renameLabel = new Label("Rename Project:");
+        renameField.setMinWidth(LayoutValues.FIELD_WIDTH);
+        renameField.setPrefWidth(LayoutValues.FIELD_WIDTH);
+        renameField.setMaxWidth(LayoutValues.FIELD_WIDTH);
 
-        renameRow.getChildren().addAll(renameLabel, renameField);
+        Label renameLabel = new Label("Name:");
+
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+
+        renameRow.getChildren().addAll(renameLabel, spacer, renameField);
         renameRow.setAlignment(Pos.CENTER_LEFT);
 
         return renameRow;
@@ -254,21 +264,28 @@ public class MenuBarView {
     private HBox buildDateRow(DatePicker datePicker) {
         HBox dateRow = new HBox();
 
+        datePicker.setMinWidth(LayoutValues.FIELD_WIDTH);
+        datePicker.setPrefWidth(LayoutValues.FIELD_WIDTH);
+        datePicker.setMaxWidth(LayoutValues.FIELD_WIDTH);
+
         Label dateLabel = new Label("Start Date:");
 
-        dateRow.getChildren().addAll(dateLabel, datePicker);
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+
+        dateRow.getChildren().addAll(dateLabel, spacer, datePicker);
         dateRow.setAlignment(Pos.CENTER_LEFT);
 
         return dateRow;
     }
 
-    private HBox buildProjectSettingsButtons(Stage projectSettingsStage, TextField projectNameField, DatePicker datePicker) {
+    private HBox buildProjectSettingsButtons(Stage projectSettingsStage, TextField projectNameField, DatePicker datePicker, String saveCreateButtonName) {
         HBox buttonRow = new HBox(LayoutValues.NODE_SPACING);
 
-        Button saveButton = new Button("Save");
+        Button saveCreateButton = new Button(saveCreateButtonName);
         Button cancelButton = new Button("Cancel");
 
-        saveButton.setOnAction(_ -> {
+        saveCreateButton.setOnAction(_ -> {
             String projectName = projectNameField.getText();
             LocalDate newStartDate = datePicker.getValue();
 
@@ -284,7 +301,7 @@ public class MenuBarView {
 
         cancelButton.setOnAction(_ -> projectSettingsStage.close());
 
-        buttonRow.getChildren().addAll(saveButton, cancelButton);
+        buttonRow.getChildren().addAll(saveCreateButton, cancelButton);
 
         return buttonRow;
     }
@@ -415,6 +432,7 @@ public class MenuBarView {
         alert.setTitle("Error");
         alert.setHeaderText(null);
         alert.setContentText(message);
+        System.err.println(message);
         alert.showAndWait();
     }
 

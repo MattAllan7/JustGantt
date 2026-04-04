@@ -29,6 +29,11 @@ public class TimelineView {
 
         setupDateAxis();
         setupRectangleArea();
+
+        headerScrollPane.hvalueProperty().bindBidirectional(
+                contentScrollPane.hvalueProperty()
+        );
+
         refreshUI();
     }
 
@@ -62,10 +67,6 @@ public class TimelineView {
         headerScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         headerScrollPane.setFitToHeight(true);
         headerScrollPane.setFitToWidth(false);
-        headerScrollPane.hvalueProperty().addListener((obs, oldVal, newVal) ->
-                contentScrollPane.setHvalue(newVal.doubleValue())
-        );
-
     }
 
     private void setupRectangleArea() {
@@ -76,7 +77,6 @@ public class TimelineView {
 
         contentScrollPane.setFitToHeight(false);
         contentScrollPane.setFitToWidth(false);
-
     }
 
     public void refreshUI() {

@@ -4,6 +4,7 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
 
+import java.net.URL;
 import java.time.LocalDate;
 import java.util.Objects;
 
@@ -61,7 +62,12 @@ public class JustGanttApp extends Application {
      */
     private void applyTheme(String theme) {
         String cssFile = UserPreferences.THEME_DARK.equals(theme) ? "resources/cupertino-dark.css" : "resources/cupertino-light.css";
-        Application.setUserAgentStylesheet(Objects.requireNonNull(getClass().getResource(cssFile)).toExternalForm());
+        URL cssUrl = getClass().getResource(cssFile);
+        if(cssUrl == null) {
+            System.err.println("Theme file not found: " + cssFile);
+            return; // fall back to default JavaFX theme
+        }
+        Application.setUserAgentStylesheet(cssUrl.toExternalForm());
     }
 
     /**
