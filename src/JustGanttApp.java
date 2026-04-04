@@ -34,7 +34,8 @@ public class JustGanttApp extends Application {
         // Stage
         this.primaryStage = primaryStage;
         updateStageTitle();
-        MainView mainView = new MainView(projectManager, setStageSize(primaryStage), this::updateStageTitle, this::applyAndSaveTheme);
+        MainView mainView = new MainView(projectManager, setStageSize(primaryStage), this::updateStageTitle,
+                this::applyAndSaveTheme, userPreferences);
         Scene mainScene = new Scene(mainView.createView());
         primaryStage.setScene(mainScene);
         primaryStage.show();

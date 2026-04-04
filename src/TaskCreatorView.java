@@ -20,6 +20,7 @@ public class TaskCreatorView {
     private Button cancelButton;
     private Button deleteButton;
     private final String CREATE_HEADER = "Create New Task";
+    private final String EDIT_HEADER = "Edit Task";
 
     private Label header;
     private VBox taskCreatorPane;
@@ -197,8 +198,7 @@ public class TaskCreatorView {
         nameField.setText(task.getName());
         startDatePicker.setValue(task.getStartDate());
         durationSpinner.getValueFactory().setValue(task.getDuration());
-        String editHeader = "Edit Task";
-        header.setText(editHeader);
+        header.setText(EDIT_HEADER);
 
         addSaveButton.setText("Save");
         cancelButton.setVisible(true);

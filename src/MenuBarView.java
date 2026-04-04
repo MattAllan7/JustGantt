@@ -24,11 +24,13 @@ public class MenuBarView {
     private final ProjectManager projectManager;
     private final Runnable onProjectChanged;
     private final Consumer<String> onThemeChanged;
+    private final UserPreferences userPreferences;
 
-    public MenuBarView(ProjectManager projectManager, Runnable onProjectChanged, Consumer<String> onThemeChanged) {
+    public MenuBarView(ProjectManager projectManager, Runnable onProjectChanged, Consumer<String> onThemeChanged, UserPreferences userPreferences) {
         this.projectManager = projectManager;
         this.onProjectChanged = onProjectChanged;
         this.onThemeChanged = onThemeChanged;
+        this.userPreferences = userPreferences;
     }
 
     /**
@@ -375,7 +377,6 @@ public class MenuBarView {
 
     private HBox buildPreferencesRadios(RadioButton darkRadio, RadioButton lightRadio) {
         // Read current saved theme so the correct radio button starts selected.
-        UserPreferences userPreferences = new UserPreferences();
         String currentTheme = userPreferences.getTheme();
 
         // Build radio buttons.

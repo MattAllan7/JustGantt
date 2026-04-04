@@ -24,10 +24,11 @@ public class MainView {
      *
      * @param projectManager The ProjectManager, passed to four views.
      */
-    public MainView(ProjectManager projectManager, Rectangle2D bounds, Runnable updateStageTitle, Consumer<String> onThemeChanged) {
+    public MainView(ProjectManager projectManager, Rectangle2D bounds, Runnable updateStageTitle,
+                    Consumer<String> onThemeChanged, UserPreferences userPreferences) {
         this.bounds = bounds;
         this.updateStageTitle = updateStageTitle;
-        menuBarView = new MenuBarView(projectManager, this::refreshAll, onThemeChanged);
+        menuBarView = new MenuBarView(projectManager, this::refreshAll, onThemeChanged, userPreferences);
         taskCreatorView = new TaskCreatorView(projectManager, this::refreshAll);
         taskListView = new TaskListView(projectManager, taskCreatorView::loadTask, this::refreshAll);
         timelineView = new TimelineView(projectManager);
