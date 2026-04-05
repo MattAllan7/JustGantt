@@ -57,6 +57,9 @@ public class ProjectManager {
     }
 
     public void setProjectName(String name) {
+        if(name == null || name.isBlank()) {
+            throw new IllegalArgumentException("Task name cannot be blank or null.");
+        }
         project.setName(name);
     }
 
@@ -108,16 +111,27 @@ public class ProjectManager {
         }
     }
 
+    public LocalDate getStartDate() {
+        return project.getStartDate();
+    }
+
     public void setStartDate(LocalDate startDate) {
+        if(startDate == null) {
+            throw new IllegalArgumentException("Project must have a start date.");
+        }
+
+        ArrayList<Task> tasks = getTasks();
+        for(Task task : tasks) {
+            if(task.getStartDate().isBefore(startDate)) {
+                throw new IllegalArgumentException("Project start date must be before or the same date as all tasks. ");
+            }
+        }
+
         project.setStartDate(startDate);
     }
 
     public ArrayList<Task> getTasks() {
         return project.getTasks();
-    }
-
-    public LocalDate getStartDate() {
-        return project.getStartDate();
     }
 
     /**

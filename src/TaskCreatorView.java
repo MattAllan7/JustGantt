@@ -19,8 +19,9 @@ public class TaskCreatorView {
     private Button addSaveButton;
     private Button cancelButton;
     private Button deleteButton;
-    private final String CREATE_HEADER = "Create New Task";
-    private final String EDIT_HEADER = "Edit Task";
+
+    private static final String CREATE_HEADER = "Create New Task";
+    private static final String EDIT_HEADER = "Edit Task";
 
     private Label header;
     private VBox taskCreatorPane;
@@ -121,13 +122,13 @@ public class TaskCreatorView {
     private void setupButtonRow() {
         // Add/Save button
         addSaveButton = new Button("Add");
-        updateAddSaveButton();
+        configureAddSaveButton();
 
         // Cancel button
         cancelButton = new Button("Cancel");
         cancelButton.setVisible(false);
 
-        cancelButton.setOnAction(_ -> clearEditingUI());
+        cancelButton.setOnAction(_ -> exitEditMode());
 
         // Delete button
         deleteButton = new Button("Delete");
@@ -137,7 +138,7 @@ public class TaskCreatorView {
             projectManager.removeTask(editingTask);
             editingTask = null;
             onTaskChanged.run();
-            clearEditingUI();
+            exitEditMode();
         });
 
         // Button HBox
@@ -146,38 +147,25 @@ public class TaskCreatorView {
         taskCreatorPane.getChildren().add(buttonRow);
     }
 
-    private void updateAddSaveButton() {
+    private void configureAddSaveButton() {
         addSaveButton.setOnAction(_ -> {
-            if(editingTask == null) {
-                // Create
-                try {
+            try {
+                if(editingTask == null) {
+                    // Create
                     projectManager.addTask(nameField.getText(), startDatePicker.getValue(), durationSpinner.getValue());
                     onTaskChanged.run();
-                } catch (IllegalArgumentException _) {
-                    showAlert(
-                            "Task name cannot be blank or null.",
-                            ""
-                    );
-                    throw new IllegalArgumentException("Task name cannot be empty.");
-                }
-            } else {
-                // Edit
-                try {
+                } else {
+                    // Edit
                     projectManager.updateTask(editingTask, nameField.getText(), startDatePicker.getValue(), durationSpinner.getValue());
-                    clearEditingUI();
-                } catch (IllegalArgumentException _) {
-                    showAlert(
-                            "Task must have a valid start date. \nTask cannot start before the project.",
-                            "To change the Project start date: \nFile > Project Settings."
-                    );
+                    exitEditMode();
                 }
+            } catch (IllegalArgumentException e) {
+                showAlert(e.getMessage());
             }
-
-
         });
     }
 
-    private void clearEditingUI() {
+    private void exitEditMode() {
         editingTask = null;
         addSaveButton.setText("Add");
         cancelButton.setVisible(false);
@@ -205,11 +193,12 @@ public class TaskCreatorView {
         deleteButton.setVisible(true);
     }
 
-    private void showAlert(String header, String context) {
+    private void showAlert(String message) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Notice");
-        alert.setHeaderText(header);
-        alert.setContentText(context);
+        alert.setHeaderText(message);
+        alert.setContentText(null);
+        System.err.println(message);
         alert.showAndWait();
     }
 

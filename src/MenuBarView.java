@@ -13,7 +13,6 @@ import javafx.stage.Window;
 
 import java.io.File;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.function.Consumer;
 
 /**
@@ -144,7 +143,7 @@ public class MenuBarView {
                 projectManager.loadFrom(file.getAbsolutePath());
                 onProjectChanged.run();
             } catch(Exception e) {
-                showError("Failed to open file:\n" + e.getMessage());
+                showAlert("Failed to open file:\n" + e.getMessage());
             }
         }
     }
@@ -179,7 +178,7 @@ public class MenuBarView {
             try {
                 projectManager.save();
             } catch(Exception e) {
-                showError("Failed to save:\n" + e.getMessage());
+                showAlert("Failed to save:\n" + e.getMessage());
             }
         } else {
             handleSaveAs(window);
@@ -209,7 +208,7 @@ public class MenuBarView {
                 projectManager.saveAs(path);
                 onProjectChanged.run();
             } catch(Exception e) {
-                showError("Failed to save:\n" + e.getMessage());
+                showAlert("Failed to save:\n" + e.getMessage());
             }
         }
     }
@@ -291,14 +290,15 @@ public class MenuBarView {
             String projectName = projectNameField.getText();
             LocalDate newStartDate = datePicker.getValue();
 
-            if(!checkProjectNameValidity(projectName)) return;
-            if(!checkStartDateValidity(newStartDate)) return;
+            try {
+                projectManager.setProjectName(projectName);
+                projectManager.setStartDate(newStartDate);
 
-            projectManager.setProjectName(projectName);
-            projectManager.setStartDate(newStartDate);
-
-            onProjectChanged.run();
-            projectSettingsStage.close();
+                onProjectChanged.run();
+                projectSettingsStage.close();
+            } catch(IllegalArgumentException e) {
+                showAlert(e.getMessage());
+            }
         });
 
         cancelButton.setOnAction(_ -> projectSettingsStage.close());
@@ -314,37 +314,6 @@ public class MenuBarView {
         projectSettingsPane.setPrefWidth(LayoutValues.POPUP_WIDTH);
 
         return projectSettingsPane;
-    }
-
-    private boolean checkProjectNameValidity(String projectName) {
-        return !projectName.isBlank();
-    }
-
-    /**
-     * Checks whether a new project start date is valid by:
-     *  Ensuring the date is not null,
-     *  Ensuring the date is not after existing task dates.
-     * Shows a corresponding alert message if the date is not allowed.
-     *
-     * @param projectStartDate The new start date being considered.
-     * @return TRUE if the date is valid, FALSE if it is not.
-     */
-    private boolean checkStartDateValidity(LocalDate projectStartDate) {
-
-        if(projectStartDate == null) {
-            showError("Invalid start date. ");
-            return false;
-        }
-
-        ArrayList<Task> tasks = projectManager.getTasks();
-        for(Task task : tasks) {
-            if(task.getStartDate().isBefore(projectStartDate)) {
-                showError("Project start date must be before or the same date as all tasks. ");
-                return false;
-            }
-        }
-
-        return true;
     }
 
     /**
@@ -423,17 +392,12 @@ public class MenuBarView {
         return preferencesPane;
     }
 
-    /**
-     * Displays an error alert with the given message.
-     *
-     * @param message The error message to display to the user.
-     */
-    private void showError(String message) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Error");
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        System.err.println(message);
+    private void showAlert(String header) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Notice");
+        alert.setHeaderText(header);
+        alert.setContentText(null);
+        System.err.println(header);
         alert.showAndWait();
     }
 
